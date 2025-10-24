@@ -1,6 +1,6 @@
 ✅ Concept & Planning
 
-- [] Define core goal — one sentence describing the product (e.g. “Centralize my movies, games and football tracking in one personal dashboard.”)
+- [x] Define core goal — one sentence describing the product (e.g. “Centralize my movies, games and football tracking in one personal dashboard.”)
 - [] Define core flows
   - [] Watchlist flow (search → add → mark progress → view details)
   - [] Football flow (select team → view next match → follow live score)
@@ -36,15 +36,15 @@
 
 ⚙️ Project Setup (repo + infra)
 
-- [] Create repo & initial README
-- [] Decide repo structure (monorepo vs single repo with feature folders)
-- [] Initialize Next.js + TypeScript (pick App or Pages router)
+- [x] Create repo & initial README
+- [x] Decide repo structure (monorepo vs single repo with feature folders)
+- [x] Initialize Next.js + TypeScript (pick App or Pages router)
 - [] Install & configure tooling
-  - [] Tailwind CSS (or your chosen styling)
-  - [] ESLint + Prettier, Husky pre-commit hooks
-  - [] Vitest + React Testing Library setup
+  - [x] Tailwind CSS (or your chosen styling)
+  - [x] ESLint + Prettier, Husky pre-commit hooks
+  - [x] Vitest + React Testing Library setup
   - [] Configure environment variables (.env.example)
-- [] Add CI skeleton (GitHub Actions) — lint, test, build
+- [x] Add CI skeleton (GitHub Actions) — lint, test, build
 - [] Add deployment target (Vercel recommended for Next.js)
 - [] Decide DB & ORM (Prisma + SQLite dev → Postgres prod)
 - [] Setup staging / preview environments (Vercel previews or similar)
