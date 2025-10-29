@@ -1,3 +1,5 @@
+import WatchlistPage from './watchlist/page'
+
 
 export default function Home() {
   return (
@@ -10,6 +12,7 @@ export default function Home() {
           <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
             Esta será la página de inicio
           </p>
+          <WatchlistPage />
         </div>
       </main>
     </div>
