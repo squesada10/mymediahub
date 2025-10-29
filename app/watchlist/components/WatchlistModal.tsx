@@ -37,6 +37,12 @@ export default function WatchlistModal({ item, onClose, onChangeStatus }: Props)
               >
                 Mark as Watched
               </button>
+              <button
+                onClick={() => onChangeStatus(item.id, 'to-watch')}
+                className="px-3 py-1 rounded bg-red-600 text-white text-sm"
+              >
+                Mark as to-Watch
+              </button>
               <button onClick={onClose} className="px-3 py-1 rounded border text-sm">
                 Close
               </button>

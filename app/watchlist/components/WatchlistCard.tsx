@@ -1,6 +1,7 @@
 'use client';
 import React from "react";
 import type { MediaItem } from '../mockWatchlist'
+import Image from "next/image";
 
 
 type Props = {
@@ -16,8 +17,13 @@ export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
       <button onClick={() => onOpen(item)} className="w-full text-left">
         <div className="h-48 w-full bg-gray-200 flex items-center justify-center">
           {item.poster ? (
-            // Next/Image is optional; use img for simplicity
-            <img src={item.poster} alt={item.title} className="object-cover h-full w-full" />
+            <Image
+              src={item.poster}
+              alt={item.title}
+              width={300}
+              height={450}
+              className="w-full h-48 object-cover"
+            />
           ) : (
             <div className="text-sm text-gray-500">No image</div>
           )}
