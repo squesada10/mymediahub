@@ -1,6 +1,7 @@
 'use client';
 
 import React from "react";
+import Image from "next/image";
 import type { MediaItem, MediaStatus } from "../mockWatchlist";
 
 type Props = {
@@ -20,7 +21,14 @@ export default function WatchlistModal({ item, onClose, onChangeStatus }: Props)
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white dark:bg-gray-900 rounded-lg max-w-2xl w-full p-6 z-10">
         <div className="flex gap-4">
-          <img src={item.poster} alt={item.title} className="w-32 h-48 object-cover rounded" />
+          {item.poster && (
+            <Image
+              src={item.poster}
+              alt={item.title}
+              width={300}
+              height={450}
+              className="w-32 h-48 object-cover rounded" />
+          )}
           <div>
             <h2 className="text-xl font-bold">{item.title} <span className="text-sm text-gray-400">({item.year})</span></h2>
             <p className="text-sm mt-2 text-gray-600 dark:text-gray-300">{item.overview}</p>

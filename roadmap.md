@@ -7,16 +7,16 @@ Goal: Make a working, local version of the Watchlist section.
 - [] Create basic UI layout inside app/watchlist/page.tsx
   - [] Add section header (“Watchlist Manager”)
   - [] Add placeholder search bar and a list/grid of cards
-- [] Create a mock data file (e.g. data/mockWatchlist.ts)
-  - [] Fill it with sample movie/series objects { id, title, year, status, poster }
+- [x] Create a mock data file (e.g. data/mockWatchlist.ts)
+  - [x] Fill it with sample movie/series objects { id, title, year, status, poster }
 - [] Map over mock data to display the cards
   - [] Use Tailwind for layout and spacing
-  - [] Add placeholder poster image and title
-- [] Add a status filter dropdown (To Watch / Watching / Watched)
-  - [] Use local state to filter the list
-- [] Add interactivity
-  - [] Click on a card → opens a modal (detail view)
-  - [] Modal shows title, poster, description, and “Mark as Watched” button
+  - [x] Add placeholder poster image and title
+- [x] Add a status filter dropdown (To Watch / Watching / Watched)
+  - [x] Use local state to filter the list
+- [x] Add interactivity
+  - [x] Click on a card → opens a modal (detail view)
+  - [x] Modal shows title, poster, description, and “Mark as Watched” button
 - [] Test all interactions locally
 
 ✅ Once this works → you have your UI skeleton + logic

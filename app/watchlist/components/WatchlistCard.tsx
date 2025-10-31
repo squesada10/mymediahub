@@ -14,7 +14,9 @@ type Props = {
 export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
   return (
     <div className="bg-surface rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
-      <button onClick={() => onOpen(item)} className="w-full text-left">
+      <div
+        onClick={() => onOpen(item)}
+        className="w-full text-left cursor-pointer">
         <div className="h-48 w-full bg-gray-200 flex items-center justify-center">
           {item.poster ? (
             <Image
@@ -51,7 +53,7 @@ export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
             )}
           </div>
         </div>
-      </button>
+      </div>
     </div>
   )
 }
