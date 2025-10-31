@@ -21,14 +21,13 @@ export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
         tabIndex={0}
         aria-label={`View details for ${item.title}`}
       >
-        <div className="h-48 w-full bg-gray-200 flex items-center justify-center">
+        <div className="relative aspect-[2/3] w-full bg-gray-200">
           {item.poster ? (
             <Image
               src={item.poster}
               alt={item.title}
-              width={300}
-              height={450}
-              className="w-full h-48 object-cover"
+              fill
+              className="object-cover"
             />
           ) : (
             <div className="text-sm text-gray-500">No image</div>
