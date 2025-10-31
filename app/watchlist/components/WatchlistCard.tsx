@@ -16,7 +16,11 @@ export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
     <div className="bg-surface rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
       <div
         onClick={() => onOpen(item)}
-        className="w-full text-left cursor-pointer">
+        className="w-full text-left cursor-pointer"
+        role="button"
+        tabIndex={0}
+        aria-label={`View details for ${item.title}`}
+      >
         <div className="h-48 w-full bg-gray-200 flex items-center justify-center">
           {item.poster ? (
             <Image
