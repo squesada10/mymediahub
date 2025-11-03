@@ -1,26 +1,30 @@
 'use client';
 import React from "react";
-import type { MediaStatus } from '../mockWatchlist'
 
 type Props = {
-  filter: MediaStatus | 'all';
-  setFilter: (f: MediaStatus | 'all') => void;
+  filter: 'all' | 'to-watch' | 'watching' | 'watched';
+  setFilter: (f: 'all' | 'to-watch' | 'watching' | 'watched') => void;
 };
 
 export default function WatchlistFilter({ filter, setFilter }: Props) {
+  const filters: Props["filter"][] = ["all", "to-watch", "watching", "watched"];
+
   return (
-    <div className="flex items-center gap-3">
-      <select
-        value={filter}
-        onChange={(e) => setFilter(e.target.value as MediaStatus | 'all')}
-        className="border rounded px-3 py-2 text-sm"
-        aria-label="Filter watchlist by status"
-      >
-        <option value="all">All</option>
-        <option value="to-watch">To Watch</option>
-        <option value="watching">Watching</option>
-        <option value="watched">Watched</option>
-      </select>
+    <div className="flex gap-2">
+      {filters.map((f) => (
+        <button
+          key={f}
+          onClick={() => setFilter(f)}
+          className={`text-sm px-3 py-1.5 rounded-md capitalize transition 
+            ${f === filter
+              ? "bg-primary text-white"
+              : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+            }`}
+        >
+          {f.replace("-", " ")}
+        </button>
+      ))}
     </div>
   );
 }
+

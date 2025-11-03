@@ -1,3 +1,5 @@
+export type MediaStatus = 'to-watch' | 'watching' | 'watched';
+
 export interface MediaItem {
   id: string;
   title: string;
@@ -5,7 +7,7 @@ export interface MediaItem {
   type: 'movie' | 'series';
   poster?: string;
   overview: string;
-  status?: "to-watch" | "watching" | "watched";
+  status?: MediaStatus;
   episodesWatched?: number;
   runtimeMinutes?: number;
 }
