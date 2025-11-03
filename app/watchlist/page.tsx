@@ -12,6 +12,7 @@ export default function WatchlistPage() {
   const [filter, setFilter] = useState<'all' | 'to-watch' | 'watching' | 'watched'>('all');
   const [selected, setSelected] = useState<MediaItem | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // ✅ Prevent hydration mismatch
   useEffect(() => {
@@ -55,7 +56,9 @@ export default function WatchlistPage() {
           </div>
           <div className="flex gap-2 items-center">
             <WatchlistFilter filter={filter} setFilter={setFilter} />
-            <button className="px-3 py-1.5 rounded-md text-sm bg-primary text-white hover:bg-primary/80 transition">
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary/80 transition">
               + Add
             </button>
           </div>
@@ -98,6 +101,13 @@ export default function WatchlistPage() {
             setSelected((s) => (s && s.id === id ? { ...s, status } : s));
           }}
         />
+        {showAddModal && (
+          <WatchlistModal
+            item={null}
+            onClose={() => setShowAddModal(false)}
+            onChangeStatus={() => { }}
+          />
+        )}
       </div>
     </main>
   );
