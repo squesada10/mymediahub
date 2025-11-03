@@ -11,6 +11,7 @@ export interface MediaItem {
   episodesWatched?: number;
   runtimeMinutes?: number;
 }
+export type NewMediaItemData = Pick<MediaItem, 'title' | 'type' | 'overview'>;
 
 export const MOCK_WATCHLIST: MediaItem[] = [
   {

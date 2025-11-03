@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect } from "react";
-import { MOCK_WATCHLIST, type MediaItem } from "./mockWatchlist";
+import { MOCK_WATCHLIST, NewMediaItemData, type MediaItem } from "./mockWatchlist";
 import WatchlistCard from "./components/WatchlistCard";
 import WatchlistFilter from "./components/WatchlistFilter";
 import WatchlistModal from "./components/WatchlistModal";
@@ -36,6 +36,20 @@ export default function WatchlistPage() {
 
   function setStatus(id: string, newStatus: MediaItem['status']) {
     setStored((prev) => prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p)));
+  }
+
+  function handleAddItem(newItem: NewMediaItemData) {
+    // Generate a simple unique ID. This will be replaced by an API ID later.
+    const newId = `manual-${Date.now()}`;
+    const itemToAdd: MediaItem = {
+      ...newItem,
+      id: newId,
+      status: 'to-watch', // Default to 'to-watch' for manually added items
+      year: new Date().getFullYear(), // Default year for manual entries
+      poster: undefined, // No poster initially
+    };
+    setStored((prev) => [itemToAdd, ...prev]); // Add to the beginning of the list
+    setShowAddModal(false); // Close the modal
   }
 
   if (!isMounted) {
@@ -100,12 +114,14 @@ export default function WatchlistPage() {
             setStatus(id, status);
             setSelected((s) => (s && s.id === id ? { ...s, status } : s));
           }}
+          onAddItem={undefined}
         />
         {showAddModal && (
           <WatchlistModal
             item={null}
             onClose={() => setShowAddModal(false)}
             onChangeStatus={() => { }}
+            onAddItem={handleAddItem}
           />
         )}
       </div>
