@@ -1,5 +1,4 @@
 'use client';
-import React from "react";
 
 type Props = {
   filter: 'all' | 'to-watch' | 'watching' | 'watched';

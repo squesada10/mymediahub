@@ -1,5 +1,4 @@
 'use client';
-import React from "react";
 import type { MediaItem } from '../mockWatchlist'
 import Image from "next/image";
 

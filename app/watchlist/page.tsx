@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { MOCK_WATCHLIST, type MediaItem } from "./mockWatchlist";
 import WatchlistCard from "./components/WatchlistCard";
 import WatchlistFilter from "./components/WatchlistFilter";
