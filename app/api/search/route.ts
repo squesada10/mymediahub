@@ -45,10 +45,13 @@ export async function GET(request: Request) {
 
     // Filter and map the results to a cleaner format
     const results: TmdbSearchResult[] = data.results
-      .filter((item: any) =>
+      .filter((item: any) => {
         // Only include movies and TV shows that have a title
-        (item.media_type === 'movie' || item.media_type === 'tv') && item.title
-      )
+        if (item.media_type !== 'movie' && item.media_type !== 'tv') {
+          return false;
+        }
+        return item.title || item.name;
+      })
       .map((item: any) => ({
         id: item.id,
         title: item.title || item.name, // 'name' for TV shows
