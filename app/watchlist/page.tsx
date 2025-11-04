@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect } from "react";
-import { MOCK_WATCHLIST, NewMediaItemData, type MediaItem } from "./mockWatchlist";
+import { MOCK_WATCHLIST, type MediaItem } from "./mockWatchlist";
 import WatchlistCard from "./components/WatchlistCard";
 import WatchlistFilter from "./components/WatchlistFilter";
 import WatchlistModal from "./components/WatchlistModal";
@@ -38,18 +38,11 @@ export default function WatchlistPage() {
     setStored((prev) => prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p)));
   }
 
-  function handleAddItem(newItem: NewMediaItemData) {
-    // Generate a simple unique ID. This will be replaced by an API ID later.
-    const newId = `manual-${Date.now()}`;
-    const itemToAdd: MediaItem = {
-      ...newItem,
-      id: newId,
-      status: 'to-watch', // Default to 'to-watch' for manually added items
-      year: new Date().getFullYear(), // Default year for manual entries
-      poster: undefined, // No poster initially
-    };
-    setStored((prev) => [itemToAdd, ...prev]); // Add to the beginning of the list
-    setShowAddModal(false); // Close the modal
+  function handleAddItem(itemToAdd: MediaItem) {
+    // No need for manual ID generation or default status/year anymore, 
+    // as SearchMediaForm handles the formatting.
+    setStored((prev) => [itemToAdd, ...prev]);
+    setShowAddModal(false);
   }
 
   function handleDeleteItem(id: string) {
@@ -113,23 +106,23 @@ export default function WatchlistPage() {
             </div>
           )}
         </section>
-
-        <WatchlistModal
-          item={selected}
-          onClose={() => setSelected(null)}
-          onChangeStatus={(id, status) => {
-            setStatus(id, status);
-            setSelected((s) => (s && s.id === id ? { ...s, status } : s));
-          }}
-          onDeleteItem={handleDeleteItem}
-          onAddItem={undefined}
-        />
+        {selected && (
+          <WatchlistModal
+            item={selected}
+            onClose={() => setSelected(null)}
+            onChangeStatus={(id, status) => {
+              setStatus(id, status);
+              setSelected((s) => (s && s.id === id ? { ...s, status } : s));
+            }}
+            onDeleteItem={handleDeleteItem}
+          />
+        )}
         {showAddModal && (
           <WatchlistModal
-            item={null}
+            item={null} // Triggers the 'Add' mode in the modal
             onClose={() => setShowAddModal(false)}
             onChangeStatus={() => { }}
-            onAddItem={handleAddItem}
+            onAddSearchItem={handleAddItem}
             onDeleteItem={undefined}
           />
         )}
@@ -137,4 +130,3 @@ export default function WatchlistPage() {
     </main>
   );
 }
-
