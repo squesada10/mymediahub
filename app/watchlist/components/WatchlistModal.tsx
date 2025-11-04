@@ -9,9 +9,10 @@ type Props = {
     onClose: () => void;
     onChangeStatus: (id: string, status: MediaStatus) => void;
     onAddItem?: (item: NewMediaItemData) => void; 
+    onDeleteItem?: (id: string) => void;
 };
 
-export default function WatchlistModal({ item, onClose, onChangeStatus, onAddItem }: Props) {
+export default function WatchlistModal({ item, onClose, onChangeStatus, onAddItem, onDeleteItem }: Props) {
     // Determine the modal mode
     const isAdding = item === null && onAddItem !== undefined; 
 
@@ -153,6 +154,14 @@ export default function WatchlistModal({ item, onClose, onChangeStatus, onAddIte
                                 >
                                     Mark as To-Watch
                                 </button>
+                                {onDeleteItem && (
+                                    <button
+                                        onClick={() => onDeleteItem(item!.id)}
+                                        className="px-3 py-1 rounded bg-red-700 text-white text-sm hover:bg-red-800 transition ml-auto"
+                                    >
+                                        Delete
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

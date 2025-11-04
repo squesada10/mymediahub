@@ -52,6 +52,13 @@ export default function WatchlistPage() {
     setShowAddModal(false); // Close the modal
   }
 
+  function handleDeleteItem(id: string) {
+    if (confirm("Are you sure you want to delete this item?")) {
+      setStored((prev) => prev.filter((p) => p.id !== id));
+      setSelected(null); // Close the modal after deletion
+    }
+  }
+
   if (!isMounted) {
     // 💤 Render skeleton or nothing until mounted
     return <main className="p-6 text-center text-muted-foreground">Loading watchlist...</main>;
@@ -114,6 +121,7 @@ export default function WatchlistPage() {
             setStatus(id, status);
             setSelected((s) => (s && s.id === id ? { ...s, status } : s));
           }}
+          onDeleteItem={handleDeleteItem}
           onAddItem={undefined}
         />
         {showAddModal && (
@@ -122,6 +130,7 @@ export default function WatchlistPage() {
             onClose={() => setShowAddModal(false)}
             onChangeStatus={() => { }}
             onAddItem={handleAddItem}
+            onDeleteItem={undefined}
           />
         )}
       </div>
