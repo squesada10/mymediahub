@@ -11,6 +11,17 @@ export interface TmdbSearchResult {
   overview: string;
 }
 
+interface TmdbRawItem {
+  media_type: string;
+  title?: string; // Movies use 'title'
+  name?: string; // TV shows use 'name'
+  release_date?: string; // Movies use this
+  first_air_date?: string; // TV shows use this
+  poster_path: string | null;
+  overview?: string;
+  id: number;
+}
+
 // Handler for GET requests (http://localhost:3000/api/search?query=dune)
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -45,18 +56,18 @@ export async function GET(request: Request) {
 
     // Filter and map the results to a cleaner format
     const results: TmdbSearchResult[] = data.results
-      .filter((item: any) => {
+      .filter((item: TmdbRawItem): boolean => {
         // Only include movies and TV shows that have a title
         if (item.media_type !== 'movie' && item.media_type !== 'tv') {
           return false;
         }
-        return item.title || item.name;
+        return !!(item.title || item.name);
       })
-      .map((item: any) => ({
+      .map((item: TmdbRawItem): TmdbSearchResult => ({
         id: item.id,
-        title: item.title || item.name, // 'name' for TV shows
+        title: item.title || item.name || '', // 'name' for TV shows
         release_date: item.release_date || item.first_air_date || 'N/A',
-        media_type: item.media_type,
+        media_type: item.media_type as 'movie' | 'tv',
         poster_path: item.poster_path,
         overview: item.overview || 'No overview available.',
       }));
