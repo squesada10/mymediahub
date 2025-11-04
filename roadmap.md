@@ -4,9 +4,9 @@
 
 Goal: Make a working, local version of the Watchlist section.
 
-- [] Create basic UI layout inside app/watchlist/page.tsx
-  - [] Add section header (“Watchlist Manager”)
-  - [] Add placeholder search bar and a list/grid of cards
+- [x] Create basic UI layout inside app/watchlist/page.tsx
+  - [x] Add section header (“Watchlist Manager”)
+  - [x] Add placeholder search bar and a list/grid of cards
 - [x] Create a mock data file (e.g. data/mockWatchlist.ts)
   - [x] Fill it with sample movie/series objects { id, title, year, status, poster }
 - [] Map over mock data to display the cards
@@ -25,13 +25,13 @@ Goal: Make a working, local version of the Watchlist section.
 
 Goal: Replace your mock list with real movie data.
 
-- [] Create .env.local and add your TMDB API key
-- [] Build a small API route: app/api/search/route.ts
-  - [] Fetch movies/series from TMDB by query
-  - [] Return clean JSON (id, title, poster, overview)
-- [] Connect the frontend search bar to this API route
-- [] Allow adding a searched movie to your local watchlist (in React state)
-- [] Optionally: persist list in localStorage
+- [x] Create .env.local and add your TMDB API key
+- [x] Build a small API route: app/api/search/route.ts
+  - [x] Fetch movies/series from TMDB by query
+  - [x] Return clean JSON (id, title, poster, overview)
+- [x] Connect the frontend search bar to this API route
+- [x] Allow adding a searched movie to your local watchlist (in React state)
+- [x] Optionally: persist list in localStorage
 
 ## Phase 3 — Polish the UI
 
