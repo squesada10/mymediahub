@@ -46,8 +46,7 @@ export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
       {/* Clickable Area to Open Detail Modal */}
       <div
         onClick={() => onOpen(item)}
-        className="cursor-pointer"
-      >
+        className="cursor-pointer">
         <div className="w-full aspect-[2/3] overflow-hidden">
           <Image
             src={posterUrl}
@@ -68,7 +67,7 @@ export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
       </div>
 
       {/* Status Badge */}
-      <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-full text-xs font-bold ${badgeClass}`}>
+      <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-full text-xs font-bold ${badgeClass}`} >
         {text}
       </span>
 
@@ -82,8 +81,7 @@ export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
           }
         }}
         title={`Change status from ${text} to next`}
-        className={`absolute top-3 right-3 p-1 rounded-full bg-white dark:bg-gray-900 shadow-md transition-colors ${iconClass}`}
-      >
+        className={`absolute top-3 right-3 p-1 rounded-full bg-white dark:bg-gray-900 shadow-md transition-colors ${iconClass}`} >
         {/* Simple Checkmark Icon */}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
           <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9.4 14.75c-.38.598-1.151.789-1.749.38L2.25 14.868a.75.75 0 0 1 1.04-1.04l5.378 5.489 9.023-14.168a.75.75 0 0 1 1.04-.208Z" clipRule="evenodd" />

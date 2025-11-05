@@ -17,20 +17,17 @@ const getStatusClasses = (status?: MediaStatus) => {
         case 'watched':
             return {
                 text: 'Watched',
-                // 💡 Use the green color for Watched
                 colorClass: 'bg-green-600',
             };
         case 'watching':
             return {
                 text: 'Watching',
-                // 💡 Use the yellow/blue color for Watching
                 colorClass: 'bg-yellow-600 dark:bg-yellow-500',
             };
         case 'to-watch':
         default:
             return {
                 text: 'To Watch',
-                // 💡 Use the red/gray color for To Watch
                 colorClass: 'bg-gray-500',
             };
     }
@@ -59,14 +56,12 @@ const getStatusButtonClass = (buttonStatus: MediaStatus, currentStatus: MediaSta
             baseClasses += ' !text-black';
         }
     }
-
     return baseClasses;
 };
 
 export default function WatchlistModal({ item, onClose, onChangeStatus, onDeleteItem, onAddSearchItem }: Props) {
     // Determine the modal mode
     const isAdding = item === null;
-
     const currentStatus = item?.status ?? 'to-watch';
 
     return (
@@ -118,29 +113,25 @@ export default function WatchlistModal({ item, onClose, onChangeStatus, onDelete
                                 <button
                                     onClick={() => onChangeStatus(item!.id, 'watching')}
                                     disabled={currentStatus === 'watching'}
-                                    className={getStatusButtonClass('watching', currentStatus)}
-                                >
+                                    className={getStatusButtonClass('watching', currentStatus)} >
                                     Mark as Watching
                                 </button>
                                 <button
                                     onClick={() => onChangeStatus(item!.id, 'watched')}
                                     disabled={currentStatus === 'to-watch'}
-                                    className={getStatusButtonClass('watched', currentStatus)}
-                                >
+                                    className={getStatusButtonClass('watched', currentStatus)} >
                                     Mark as Watched
                                 </button>
                                 <button
                                     onClick={() => onChangeStatus(item!.id, 'to-watch')}
                                     disabled={currentStatus === 'to-watch'}
-                                    className={getStatusButtonClass('to-watch', currentStatus)}
-                                >
+                                    className={getStatusButtonClass('to-watch', currentStatus)} >
                                     Mark as To-Watch
                                 </button>
                                 {onDeleteItem && (
                                     <button
                                         onClick={() => onDeleteItem(item!.id)}
-                                        className="px-3 py-1 rounded bg-red-700 text-white text-sm hover:bg-red-800 transition ml-auto"
-                                    >
+                                        className="px-3 py-1 rounded bg-red-700 text-white text-sm hover:bg-red-800 transition ml-auto" >
                                         Delete
                                     </button>
                                 )}

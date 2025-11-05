@@ -50,10 +50,10 @@ export default function SearchMediaForm({ onAdd, onClose }: SearchProps) {
     }
   };
 
-  // Function to format the TMDB result into your local MediaItem type
+  // Function to format the TMDB result into my local MediaItem type
   const formatAndAddItem = (result: TmdbSearchResult) => {
     const item: MediaItem = {
-      // TMDB IDs are numbers, convert to string for consistency with your existing 'id: string' type
+      // TMDB IDs are numbers, convert to string for consistency with my existing 'id: string' type
       id: String(result.id),
       title: result.title,
       year: result.release_date ? new Date(result.release_date).getFullYear() : undefined,
@@ -121,8 +121,7 @@ export default function SearchMediaForm({ onAdd, onClose }: SearchProps) {
                   </div>
                   <button
                     onClick={() => formatAndAddItem(item)}
-                    className="px-3 py-1 rounded-lg bg-green-600 text-white text-xs hover:bg-green-700 transition flex-shrink-0"
-                  >
+                    className="px-3 py-1 rounded-lg bg-green-600 text-white text-xs hover:bg-green-700 transition flex-shrink-0" >
                     Add
                   </button>
                 </div>
@@ -141,8 +140,7 @@ export default function SearchMediaForm({ onAdd, onClose }: SearchProps) {
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-        >
+          className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition" >
           Cancel
         </button>
       </div>
