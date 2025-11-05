@@ -1,4 +1,4 @@
-export type MediaStatus = 'to-watch' | 'watching' | 'watched';
+import type { MediaStatus } from "@/lib/status-utils"
 export type MediaItem = MovieItem | SeriesItem;
 
 // 1. Define Base Properties for all media types

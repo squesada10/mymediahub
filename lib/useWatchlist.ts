@@ -1,8 +1,8 @@
 import { useMemo, useState, useEffect, useCallback, SetStateAction } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 import { MOCK_WATCHLIST } from "@/app/watchlist/mockWatchlist";
-import type { MediaItem, MediaStatus } from "@/app/watchlist/types";
-
+import type { MediaItem } from "@/app/watchlist/types";
+import type { MediaStatus } from "@/lib/status-utils"
 // Define the return type for the hook
 export type UseWatchlistResult = {
   // Data

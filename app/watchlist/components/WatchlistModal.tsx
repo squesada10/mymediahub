@@ -1,9 +1,9 @@
 'use client';
 
 import Image from "next/image";
-import type { MediaItem, MediaStatus } from "../types";
+import type { MediaItem } from "../types";
 import SearchMediaForm from "./SearchMediaForm";
-import { getStatusButtonClass } from "@/lib/status-utils";
+import { MediaStatus, getStatusButtonClass } from "@/lib/status-utils";
 
 
 type Props = {

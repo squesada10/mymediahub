@@ -1,5 +1,4 @@
-import type { MediaStatus } from "@/app/watchlist/types";
-
+export type MediaStatus = 'to-watch' | 'watching' | 'watched';
 // 1. Unified Helper: Provides all classes needed by both Card and Modal
 export const getStatusClasses = (status?: MediaStatus) => {
   switch (status) {

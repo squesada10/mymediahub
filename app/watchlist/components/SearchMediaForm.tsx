@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { TMDB_IMAGE_BASE_URL } from "@/lib/api-constants";
 import type { TmdbSearchResult } from "@/app/api/search/route";
-import type { MediaItem } from "../mockWatchlist";
+import type { MediaItem } from "../types";
 import SearchSkeleton from "./SearchSkeleton";
 
 // Props for the Search Form
