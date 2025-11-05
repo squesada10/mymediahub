@@ -10,6 +10,7 @@ export type UseWatchlistResult = {
   filter: 'all' | MediaStatus;
   selected: MediaItem | null;
   isMounted: boolean;
+  showAddModal: boolean;
 
   // Actions
   setFilter: (f: 'all' | MediaStatus) => void;
@@ -18,6 +19,7 @@ export type UseWatchlistResult = {
   setStatus: (id: string, newStatus: MediaStatus) => void;
   handleAddItem: (itemToAdd: MediaItem) => void;
   handleDeleteItem: (id: string) => void;
+  setShowAddModal: (show: boolean) => void;
 };
 
 
@@ -36,6 +38,7 @@ export function useWatchlist(): UseWatchlistResult {
   const [filter, setFilter] = useState<'all' | MediaStatus>('all');
   const [selected, setSelected] = useState<MediaItem | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // 2. Side Effect (from page.tsx)
   useEffect(() => {
@@ -59,6 +62,7 @@ export function useWatchlist(): UseWatchlistResult {
 
   const handleAddItem = useCallback((itemToAdd: MediaItem) => {
     setStored((prev) => [itemToAdd, ...prev]);
+    setShowAddModal(false);
   }, [setStored]);
 
   const handleDeleteItem = useCallback((id: string) => {
@@ -74,11 +78,13 @@ export function useWatchlist(): UseWatchlistResult {
     filter,
     selected,
     isMounted,
+    showAddModal,
     setFilter,
     setSelected,
     handleToggleStatus,
     setStatus,
     handleAddItem,
     handleDeleteItem,
+    setShowAddModal
   };
 }

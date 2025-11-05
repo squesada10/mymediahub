@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from "react";
 import { useWatchlist } from "@/lib/useWatchlist";
 import type { MediaItem } from "./types";
 import WatchlistCard from "./components/WatchlistCard";
@@ -13,14 +12,15 @@ export default function WatchlistPage() {
     filter,
     selected,
     isMounted,
+    showAddModal,
     setFilter,
     setSelected,
     handleToggleStatus,
     setStatus,
     handleAddItem,
     handleDeleteItem,
+    setShowAddModal
   } = useWatchlist();
-  const [showAddModal, setShowAddModal] = useState(false);
 
   if (!isMounted) {
     // 💤 Render skeleton or nothing until mounted
