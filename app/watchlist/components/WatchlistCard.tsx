@@ -65,7 +65,6 @@ export default function WatchlistCard({ item, onOpen, onToggleStatus, onDeleteIt
           <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9.4 14.75c-.38.598-1.151.789-1.749.38L2.25 14.868a.75.75 0 0 1 1.04-1.04l5.378 5.489 9.023-14.168a.75.75 0 0 1 1.04-.208Z" clipRule="evenodd" />
         </svg>
       </button>
-      {/* 🗑️ NEW: Quick Delete Button (Bottom Right) */}
       <button
         onClick={(e) => {
           e.stopPropagation(); // Prevents the card's onOpen from firing
@@ -73,8 +72,7 @@ export default function WatchlistCard({ item, onOpen, onToggleStatus, onDeleteIt
         }}
         title={`Delete ${item.title}`}
         className="absolute bottom-3 right-3 p-1 rounded-full bg-white dark:bg-gray-900 shadow-md 
-                           text-red-500 hover:text-red-600 transition-colors z-10" // 💡 Added z-10 for layering safety
-      >
+                           text-red-500 hover:text-red-600 transition-colors z-10" >
         {/* Cleaned-up Trash Can SVG Icon */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
