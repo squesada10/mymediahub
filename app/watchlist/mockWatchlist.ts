@@ -1,16 +1,5 @@
-export type MediaStatus = 'to-watch' | 'watching' | 'watched';
+import type { MediaItem } from "./types";
 
-export interface MediaItem {
-  id: string;
-  title: string;
-  year?: number;
-  type: 'movie' | 'series';
-  poster?: string;
-  overview: string;
-  status?: MediaStatus;
-  episodesWatched?: number;
-  runtimeMinutes?: number;
-}
 export type NewMediaItemData = Pick<MediaItem, 'title' | 'type' | 'overview'>;
 
 export const MOCK_WATCHLIST: MediaItem[] = [

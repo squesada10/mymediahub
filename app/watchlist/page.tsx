@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useState, useEffect } from "react";
-import { MOCK_WATCHLIST, type MediaItem } from "./mockWatchlist";
+import { MOCK_WATCHLIST } from "./mockWatchlist";
+import type { MediaItem } from "./types";
 import WatchlistCard from "./components/WatchlistCard";
 import WatchlistFilter from "./components/WatchlistFilter";
 import WatchlistModal from "./components/WatchlistModal";

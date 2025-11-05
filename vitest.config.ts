@@ -6,4 +6,9 @@ export default defineConfig({
     globals: true,
     setupFiles: './test-setup.ts'
   },
+  resolve: {
+    alias: {
+      '@/': new URL('./', import.meta.url).pathname,
+    }
+  }
 });

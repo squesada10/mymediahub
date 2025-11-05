@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import WatchlistCard from '../app/watchlist/components/WatchlistCard';
-import type { MediaItem } from '../app/watchlist/mockWatchlist';
+import type { MediaItem } from '../app/watchlist/types';
 
 const mockItem: MediaItem = {
   id: 'test-1',
@@ -11,6 +11,7 @@ const mockItem: MediaItem = {
   poster: '',
   overview: 'Test overview',
   status: 'to-watch',
+  runtimeMinutes: 120,
 };
 
 describe('WatchlistCard', () => {
@@ -23,7 +24,7 @@ describe('WatchlistCard', () => {
   test('calls onOpen when clicking card', () => {
     const onOpen = vi.fn();
     render(<WatchlistCard item={mockItem} onOpen={onOpen} />);
-    fireEvent.click(screen.getByRole('button', { name: `View details for ${mockItem.title}` }));
+    fireEvent.click(screen.getByText('Test Movie'));
     expect(onOpen).toHaveBeenCalled();
   });
 });

@@ -1,7 +1,7 @@
 'use client';
-import type { MediaItem } from '../mockWatchlist'
 import Image from "next/image";
-import { MediaStatus, getStatusClasses } from "@/lib/status-utils";
+import { getStatusClasses } from "@/lib/status-utils";
+import type { MediaItem } from "../types";
 
 type Props = {
   item: MediaItem;
