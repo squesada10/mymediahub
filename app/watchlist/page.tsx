@@ -5,6 +5,7 @@ import type { MediaItem } from "./types";
 import WatchlistCard from "./components/WatchlistCard";
 import WatchlistFilter from "./components/WatchlistFilter";
 import WatchlistModal from "./components/WatchlistModal";
+import ConfirmDialog from "./components/ConfirmDialog"
 
 export default function WatchlistPage() {
   const {
@@ -18,8 +19,11 @@ export default function WatchlistPage() {
     handleToggleStatus,
     setStatus,
     handleAddItem,
-    handleDeleteItem,
-    setShowAddModal
+    setShowAddModal,
+    requestDeleteItem,
+    confirmDeleteItem,
+    pendingDeletion,
+    setPendingDeletion,
   } = useWatchlist();
 
   if (!isMounted) {
@@ -71,7 +75,7 @@ export default function WatchlistPage() {
                   item={item}
                   onOpen={(it) => setSelected(it)}
                   onToggleStatus={handleToggleStatus}
-                  onDeleteItem={handleDeleteItem}
+                  onDeleteItem={requestDeleteItem}
                 />
               ))}
             </div>
@@ -90,16 +94,24 @@ export default function WatchlistPage() {
                 return prevSelected;
               });
             }}
-            onDeleteItem={handleDeleteItem}
+            onDeleteItem={requestDeleteItem}
           />
         )}
         {showAddModal && (
           <WatchlistModal
-            item={null} // Triggers the 'Add' mode in the modal
+            item={null}
             onClose={() => setShowAddModal(false)}
             onChangeStatus={() => { }}
             onAddSearchItem={handleAddItem}
             onDeleteItem={undefined}
+          />
+        )}
+        {pendingDeletion && (
+          <ConfirmDialog
+            title="Confirm Deletion"
+            message={`Are you sure you want to permanently delete "${pendingDeletion.title}" from your watchlist? This action cannot be undone.`}
+            onConfirm={confirmDeleteItem}
+            onCancel={() => setPendingDeletion(null)}
           />
         )}
       </div>

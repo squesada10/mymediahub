@@ -2,8 +2,10 @@ import { useMemo, useState, useEffect, useCallback, SetStateAction } from "react
 import { useLocalStorage } from "./useLocalStorage";
 import { MOCK_WATCHLIST } from "@/app/watchlist/mockWatchlist";
 import type { MediaItem } from "@/app/watchlist/types";
-import type { MediaStatus } from "@/lib/status-utils"
-// Define the return type for the hook
+import type { MediaStatus } from "@/lib/status-utils";
+
+type PendingDeletion = { id: string, title: string } | null;
+
 export type UseWatchlistResult = {
   // Data
   list: MediaItem[];
@@ -11,6 +13,7 @@ export type UseWatchlistResult = {
   selected: MediaItem | null;
   isMounted: boolean;
   showAddModal: boolean;
+  pendingDeletion: PendingDeletion;
 
   // Actions
   setFilter: (f: 'all' | MediaStatus) => void;
@@ -18,8 +21,11 @@ export type UseWatchlistResult = {
   handleToggleStatus: (id: string) => void;
   setStatus: (id: string, newStatus: MediaStatus) => void;
   handleAddItem: (itemToAdd: MediaItem) => void;
-  handleDeleteItem: (id: string) => void;
+  // handleDeleteItem: (id: string) => void;
   setShowAddModal: (show: boolean) => void;
+  setPendingDeletion: (item: PendingDeletion) => void;
+  confirmDeleteItem: () => void;
+  requestDeleteItem: (id: string) => void;
 };
 
 
@@ -39,6 +45,7 @@ export function useWatchlist(): UseWatchlistResult {
   const [selected, setSelected] = useState<MediaItem | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [pendingDeletion, setPendingDeletion] = useState<PendingDeletion>(null);
 
   // 2. Side Effect (from page.tsx)
   useEffect(() => {
@@ -65,12 +72,25 @@ export function useWatchlist(): UseWatchlistResult {
     setShowAddModal(false);
   }, [setStored]);
 
-  const handleDeleteItem = useCallback((id: string) => {
-    if (confirm("Are you sure you want to delete this item?")) {
-      setStored((prev) => prev.filter((p) => p.id !== id));
-      setSelected(null);
+  const confirmDeleteItem = useCallback(() => {
+    if (!pendingDeletion) return;
+
+    const idToDelete = pendingDeletion.id;
+
+    setStored((prev) => prev.filter((p) => p.id !== idToDelete));
+    setSelected(null);
+    // Clear the pending state
+    setPendingDeletion(null);
+  }, [pendingDeletion, setStored]);
+
+  // Handler to trigger the dialog (called by the cards/modal)
+  const requestDeleteItem = useCallback((id: string) => {
+    const item = stored.find(i => i.id === id);
+    if (item) {
+      setPendingDeletion({ id: item.id, title: item.title });
     }
-  }, [setStored]);
+  }, [stored]);
+
 
 
   return {
@@ -79,12 +99,15 @@ export function useWatchlist(): UseWatchlistResult {
     selected,
     isMounted,
     showAddModal,
+    pendingDeletion,
     setFilter,
     setSelected,
     handleToggleStatus,
     setStatus,
     handleAddItem,
-    handleDeleteItem,
-    setShowAddModal
+    setShowAddModal,
+    confirmDeleteItem,
+    requestDeleteItem,
+    setPendingDeletion
   };
 }
