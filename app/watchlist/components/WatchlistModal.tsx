@@ -1,8 +1,10 @@
 'use client';
 
 import Image from "next/image";
-import type { MediaItem, MediaStatus } from "../mockWatchlist";
+import type { MediaItem } from "../mockWatchlist";
 import SearchMediaForm from "./SearchMediaForm";
+import { MediaStatus, getStatusButtonClass } from "@/lib/status-utils";
+
 
 type Props = {
     item: MediaItem | null;
@@ -10,53 +12,6 @@ type Props = {
     onChangeStatus: (id: string, status: MediaStatus) => void;
     onDeleteItem?: (id: string) => void;
     onAddSearchItem?: (item: MediaItem) => void;
-};
-
-const getStatusClasses = (status?: MediaStatus) => {
-    switch (status) {
-        case 'watched':
-            return {
-                text: 'Watched',
-                colorClass: 'bg-green-600',
-            };
-        case 'watching':
-            return {
-                text: 'Watching',
-                colorClass: 'bg-yellow-600 dark:bg-yellow-500',
-            };
-        case 'to-watch':
-        default:
-            return {
-                text: 'To Watch',
-                colorClass: 'bg-gray-500',
-            };
-    }
-};
-
-// Helper to generate button classes based on current status
-const getStatusButtonClass = (buttonStatus: MediaStatus, currentStatus: MediaStatus) => {
-    const { colorClass } = getStatusClasses(buttonStatus);
-    const isActive = buttonStatus === currentStatus;
-
-    // Base classes for all buttons
-    let baseClasses = "px-3 py-1 rounded text-white text-sm transition ";
-
-    if (isActive) {
-        if (buttonStatus === 'watched') baseClasses += 'bg-green-800 disabled:opacity-100 cursor-default';
-        else if (buttonStatus === 'watching') baseClasses += 'bg-yellow-700 disabled:opacity-100 cursor-default';
-        else if (buttonStatus === 'to-watch') baseClasses += 'bg-gray-700 disabled:opacity-100 cursor-default';
-
-    } else {
-        // Inactive Status: Use the standard color class with hover effect
-        baseClasses += `${colorClass} hover:opacity-80`;
-
-        // Since yellow text is hard to read on light backgrounds, 
-        // we explicitly set text color for the 'watching' button if it's not active.
-        if (buttonStatus === 'watching') {
-            baseClasses += ' !text-black';
-        }
-    }
-    return baseClasses;
 };
 
 export default function WatchlistModal({ item, onClose, onChangeStatus, onDeleteItem, onAddSearchItem }: Props) {

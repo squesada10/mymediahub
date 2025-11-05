@@ -5,4 +5,4 @@
 
 # Ideas!
 
-[] Buscar por actores/directores, etc.
+[] Buscar por actores/directores/genero/año, etc.

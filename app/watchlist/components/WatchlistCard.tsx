@@ -1,7 +1,7 @@
 'use client';
 import type { MediaItem } from '../mockWatchlist'
 import Image from "next/image";
-
+import { MediaStatus, getStatusClasses } from "@/lib/status-utils";
 
 type Props = {
   item: MediaItem;
@@ -9,29 +9,6 @@ type Props = {
   onToggleStatus?: (id: string) => void;
 };
 
-const getStatusClasses = (status?: MediaItem['status']) => {
-  switch (status) {
-    case 'watched':
-      return {
-        text: 'Watched',
-        badgeClass: 'bg-green-500 text-white',
-        iconClass: 'text-green-500 hover:text-green-400',
-      };
-    case 'watching':
-      return {
-        text: 'Watching',
-        badgeClass: 'bg-yellow-500 text-black',
-        iconClass: 'text-yellow-500 hover:text-yellow-400',
-      };
-    case 'to-watch':
-    default:
-      return {
-        text: 'To Watch',
-        badgeClass: 'bg-gray-500 text-white',
-        iconClass: 'text-gray-500 hover:text-gray-400',
-      };
-  }
-};
 
 export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
 
