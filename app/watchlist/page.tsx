@@ -14,6 +14,7 @@ export default function WatchlistPage() {
     selected,
     isMounted,
     showAddModal,
+    pendingDeletion,
     setFilter,
     setSelected,
     handleToggleStatus,
@@ -22,7 +23,6 @@ export default function WatchlistPage() {
     setShowAddModal,
     requestDeleteItem,
     confirmDeleteItem,
-    pendingDeletion,
     setPendingDeletion,
   } = useWatchlist();
 
