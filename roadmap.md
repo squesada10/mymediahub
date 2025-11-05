@@ -37,10 +37,10 @@ Goal: Replace your mock list with real movie data.
 
 Goal: Make it feel real and beautiful.
 
-- [] Add hover animations with Tailwind and Framer Motion
-- [] Add empty state (“No items yet”)
-- [] Add loading skeleton for search results
-- [] Create consistent button and card components
+- [x] Add hover animations with Tailwind and Framer Motion
+- [x] Add empty state (“No items yet”)
+- [x] Add loading skeleton for search results
+- [x] Create consistent button and card components
 - [] Write unit tests (Vitest + Testing Library) for core UI
   - [] Render list correctly
   - [] Filter works
