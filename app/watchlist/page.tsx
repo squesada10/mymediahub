@@ -71,6 +71,7 @@ export default function WatchlistPage() {
                   item={item}
                   onOpen={(it) => setSelected(it)}
                   onToggleStatus={handleToggleStatus}
+                  onDeleteItem={handleDeleteItem}
                 />
               ))}
             </div>

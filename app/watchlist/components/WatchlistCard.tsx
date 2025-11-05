@@ -7,10 +7,11 @@ type Props = {
   item: MediaItem;
   onOpen: (item: MediaItem) => void;
   onToggleStatus?: (id: string) => void;
+  onDeleteItem: (id: string) => void;
 };
 
 
-export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
+export default function WatchlistCard({ item, onOpen, onToggleStatus, onDeleteItem }: Props) {
 
   const { text, badgeClass, iconClass } = getStatusClasses(item.status);
   const posterUrl = item.poster || '/placeholder-poster.png';
@@ -62,6 +63,32 @@ export default function WatchlistCard({ item, onOpen, onToggleStatus }: Props) {
         {/* Simple Checkmark Icon */}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
           <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9.4 14.75c-.38.598-1.151.789-1.749.38L2.25 14.868a.75.75 0 0 1 1.04-1.04l5.378 5.489 9.023-14.168a.75.75 0 0 1 1.04-.208Z" clipRule="evenodd" />
+        </svg>
+      </button>
+      {/* 🗑️ NEW: Quick Delete Button (Bottom Right) */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation(); // Prevents the card's onOpen from firing
+          onDeleteItem(item.id);
+        }}
+        title={`Delete ${item.title}`}
+        className="absolute bottom-3 right-3 p-1 rounded-full bg-white dark:bg-gray-900 shadow-md 
+                           text-red-500 hover:text-red-600 transition-colors z-10" // 💡 Added z-10 for layering safety
+      >
+        {/* Cleaned-up Trash Can SVG Icon */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-5 h-5"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.28-7.98a2.25 2.25 0 00-2.25-2.25H7.75a2.25 2.25 0 00-2.25 2.25V5.25h13.5V2.25zM6 6v15h12V6H6z"
+          />
         </svg>
       </button>
     </div>
