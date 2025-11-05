@@ -12,38 +12,51 @@ type Props = {
     onAddSearchItem?: (item: MediaItem) => void;
 };
 
+const getStatusClasses = (status?: MediaStatus) => {
+    switch (status) {
+        case 'watched':
+            return {
+                text: 'Watched',
+                // 💡 Use the green color for Watched
+                colorClass: 'bg-green-600',
+            };
+        case 'watching':
+            return {
+                text: 'Watching',
+                // 💡 Use the yellow/blue color for Watching
+                colorClass: 'bg-yellow-600 dark:bg-yellow-500',
+            };
+        case 'to-watch':
+        default:
+            return {
+                text: 'To Watch',
+                // 💡 Use the red/gray color for To Watch
+                colorClass: 'bg-gray-500',
+            };
+    }
+};
 
 // Helper to generate button classes based on current status
 const getStatusButtonClass = (buttonStatus: MediaStatus, currentStatus: MediaStatus) => {
+    const { colorClass } = getStatusClasses(buttonStatus);
     const isActive = buttonStatus === currentStatus;
 
     // Base classes for all buttons
     let baseClasses = "px-3 py-1 rounded text-white text-sm transition ";
 
-    // Classes specific to the target status
-    if (buttonStatus === 'watching') {
-        if (isActive) {
-            // Active: Darker blue, maybe disabled
-            baseClasses += "bg-blue-800 disabled:opacity-100 cursor-default";
-        } else {
-            // Not Active: Standard blue, hover effect
-            baseClasses += "bg-blue-600 hover:bg-blue-700";
-        }
-    } else if (buttonStatus === 'watched') {
-        if (isActive) {
-            // Active: Darker green, maybe disabled
-            baseClasses += "bg-green-800 disabled:opacity-100 cursor-default";
-        } else {
-            // Not Active: Standard green, hover effect
-            baseClasses += "bg-green-600 hover:bg-green-700";
-        }
-    } else if (buttonStatus === 'to-watch') {
-        if (isActive) {
-            // Active: Darker red, maybe disabled
-            baseClasses += "bg-red-800 disabled:opacity-100 cursor-default";
-        } else {
-            // Not Active: Standard red, hover effect
-            baseClasses += "bg-red-600 hover:bg-red-700";
+    if (isActive) {
+        if (buttonStatus === 'watched') baseClasses += 'bg-green-800 disabled:opacity-100 cursor-default';
+        else if (buttonStatus === 'watching') baseClasses += 'bg-yellow-700 disabled:opacity-100 cursor-default';
+        else if (buttonStatus === 'to-watch') baseClasses += 'bg-gray-700 disabled:opacity-100 cursor-default';
+
+    } else {
+        // Inactive Status: Use the standard color class with hover effect
+        baseClasses += `${colorClass} hover:opacity-80`;
+
+        // Since yellow text is hard to read on light backgrounds, 
+        // we explicitly set text color for the 'watching' button if it's not active.
+        if (buttonStatus === 'watching') {
+            baseClasses += ' !text-black';
         }
     }
 
