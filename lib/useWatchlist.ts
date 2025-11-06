@@ -1,10 +1,13 @@
 import { useMemo, useState, useEffect, useCallback, SetStateAction } from "react";
+import { useSearchParams } from 'next/navigation';
 import { useLocalStorage } from "./useLocalStorage";
 import { MOCK_WATCHLIST } from "@/app/watchlist/mockWatchlist";
 import type { MediaItem } from "@/app/watchlist/types";
 import type { MediaStatus } from "@/lib/status-utils";
 
 type PendingDeletion = { id: string, title: string } | null;
+
+export type MediaTypeFilter = 'all' | 'movie' | 'series' | MediaStatus;
 
 export type UseWatchlistResult = {
   // Data
@@ -21,7 +24,6 @@ export type UseWatchlistResult = {
   handleToggleStatus: (id: string) => void;
   setStatus: (id: string, newStatus: MediaStatus) => void;
   handleAddItem: (itemToAdd: MediaItem) => void;
-  // handleDeleteItem: (id: string) => void;
   setShowAddModal: (show: boolean) => void;
   setPendingDeletion: (item: PendingDeletion) => void;
   confirmDeleteItem: () => void;
@@ -39,7 +41,9 @@ function toggle(status?: string) {
 
 
 export function useWatchlist(): UseWatchlistResult {
-  // 1. State Management (from page.tsx)
+
+  const searchParams = useSearchParams();
+
   const [stored, setStored] = useLocalStorage<MediaItem[]>('watchlist_v1', MOCK_WATCHLIST);
   const [filter, setFilter] = useState<'all' | MediaStatus>('all');
   const [selected, setSelected] = useState<MediaItem | null>(null);
@@ -51,12 +55,24 @@ export function useWatchlist(): UseWatchlistResult {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  const typeFilter = searchParams.get('type') as 'movie' | 'series' | null;
 
   // 3. Filtering Logic (from page.tsx)
   const list = useMemo(() => {
-    if (filter === 'all') return stored;
-    return stored.filter((s) => s.status === filter);
-  }, [stored, filter]);
+    let filteredList = stored;
+
+    // Apply Status Filter first ('watched', 'watching', 'to-watch')
+    if (filter !== 'all') {
+      filteredList = filteredList.filter((s) => s.status === filter);
+    }
+
+    // 💡 Apply Type Filter (from URL) second
+    if (typeFilter) {
+      filteredList = filteredList.filter((s) => s.type === typeFilter);
+    }
+
+    return filteredList;
+  }, [stored, filter, typeFilter]);
 
   // 4. Handlers (from page.tsx)
   const handleToggleStatus = useCallback((id: string) => {
