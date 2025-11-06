@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useCallback, SetStateAction } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useLocalStorage } from "./useLocalStorage";
 import { MOCK_WATCHLIST } from "@/app/watchlist/mockWatchlist";
 import type { MediaItem } from "@/app/watchlist/types";
@@ -41,29 +41,30 @@ function toggle(status?: string) {
 
 
 export function useWatchlist(): UseWatchlistResult {
-
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [stored, setStored] = useLocalStorage<MediaItem[]>('watchlist_v1', MOCK_WATCHLIST);
-  const [filter, setFilter] = useState<'all' | MediaStatus>('all');
   const [selected, setSelected] = useState<MediaItem | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [pendingDeletion, setPendingDeletion] = useState<PendingDeletion>(null);
 
+  const statusFilter = (searchParams.get('status') as MediaStatus | null) || 'all';
+  const typeFilter = searchParams.get('type') as 'movie' | 'series' | null;
+
   // 2. Side Effect (from page.tsx)
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  const typeFilter = searchParams.get('type') as 'movie' | 'series' | null;
 
   // 3. Filtering Logic (from page.tsx)
   const list = useMemo(() => {
     let filteredList = stored;
 
     // Apply Status Filter first ('watched', 'watching', 'to-watch')
-    if (filter !== 'all') {
-      filteredList = filteredList.filter((s) => s.status === filter);
+    if (statusFilter !== 'all') {
+      filteredList = filteredList.filter((s) => s.status === statusFilter);
     }
 
     // 💡 Apply Type Filter (from URL) second
@@ -72,9 +73,24 @@ export function useWatchlist(): UseWatchlistResult {
     }
 
     return filteredList;
-  }, [stored, filter, typeFilter]);
+  }, [stored, statusFilter, typeFilter]);
 
   // 4. Handlers (from page.tsx)
+
+  const setFilter = useCallback((newStatus: 'all' | MediaStatus) => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+
+    if (newStatus === 'all') {
+      currentParams.delete('status');
+    } else {
+      currentParams.set('status', newStatus);
+    }
+
+    // Push new URL without navigating away from the watchlist page
+    router.push(`/watchlist?${currentParams.toString()}`, { scroll: false });
+  }, [router, searchParams]);
+
+
   const handleToggleStatus = useCallback((id: string) => {
     setStored((prev) => prev.map((p) => (p.id === id ? { ...p, status: toggle(p.status) } : p)));
   }, [setStored]);
@@ -111,7 +127,7 @@ export function useWatchlist(): UseWatchlistResult {
 
   return {
     list,
-    filter,
+    filter: statusFilter,
     selected,
     isMounted,
     showAddModal,
