@@ -29,9 +29,8 @@ export default function Sidebar() {
 
         {/* Navigation Links */}
         <div className="flex flex-col gap-2">
-          {/* Home/Watchlist Link (Assuming 'Home' is currently your Watchlist) */}
           <NavLink
-            href="/watchlist"
+            href="/"
             label="Home"
             icon={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M11.47 3.84a.75.75 0 011.06 0l8.64 8.64a.75.75 0 01.22 1.05.75.75 0 01-.19.22l-1.9 1.9V20a2 2 0 01-2 2H6a2 2 0 01-2-2v-4.65l-1.9-1.9a.75.75 0 01-.19-.22.75.75 0 01.22-1.05l8.64-8.64z" /></svg>}
           />
