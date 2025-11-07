@@ -1,5 +1,8 @@
 import type { MediaStatus } from "@/lib/status-utils"
+
 export type MediaItem = MovieItem | SeriesItem;
+export type StatusFilter = 'all' | MediaItem['status'];
+export type TypeFilter = 'all' | MediaItem['type'];
 
 // 1. Define Base Properties for all media types
 interface BaseMedia {

@@ -2,6 +2,8 @@ import { useMemo, useState, useEffect, useCallback, SetStateAction } from "react
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useLocalStorage } from "./useLocalStorage";
 import { MOCK_WATCHLIST } from "@/app/watchlist/mockWatchlist";
+import { ALL_AVAILABLE_GENRES } from "@/lib/tmdb-constants";
+import { filterWatchlist } from "@/lib/filter-utils";
 import type { MediaItem } from "@/app/watchlist/types";
 import type { MediaStatus } from "@/lib/status-utils";
 
@@ -19,11 +21,13 @@ export type UseWatchlistResult = {
   pendingDeletion: PendingDeletion;
   genres: string[]; // All unique genres found
   genreFilter: string | null; // The currently active genre
+  queryFilter: string | null;
   setGenreFilter: (genre: string | null) => void;
 
   // Actions
   setFilter: (f: 'all' | MediaStatus) => void;
   setSelected: (item: MediaItem | null | SetStateAction<MediaItem | null>) => void;
+  setQueryFilter: (newQuery: string | null) => void;
   handleToggleStatus: (id: string) => void;
   setStatus: (id: string, newStatus: MediaStatus) => void;
   handleAddItem: (itemToAdd: MediaItem) => void;
@@ -33,7 +37,6 @@ export type UseWatchlistResult = {
   requestDeleteItem: (id: string) => void;
 };
 
-
 // Helper function (moved from page.tsx)
 function toggle(status?: string) {
   if (status === 'to-watch') return 'watching' as MediaStatus;
@@ -41,35 +44,6 @@ function toggle(status?: string) {
   if (status === 'watched') return 'to-watch' as MediaStatus;
   return 'to-watch' as MediaStatus;
 }
-const ALL_AVAILABLE_GENRES = [
-  'Action',
-  'Adventure',
-  'Action & Adventure',
-  'Animation',
-  'Comedy',
-  'Crime',
-  'Documentary',
-  'Drama',
-  'Family',
-  'Kids',
-  'Fantasy',
-  'History',
-  'Horror',
-  'Music',
-  'Mystery',
-  'News',
-  'Reality',
-  'Romance',
-  'Science-Fiction',
-  'Sci-Fi & Fantasy',
-  'Soap',
-  'Talk',
-  'TV Movie',
-  'Thriller',
-  'War',
-  'War & Politics',
-  'Western'
-].sort();
 
 export function useWatchlist(): UseWatchlistResult {
   const router = useRouter();
@@ -84,6 +58,7 @@ export function useWatchlist(): UseWatchlistResult {
   const statusFilter = (searchParams.get('status') as MediaStatus | null) || 'all';
   const typeFilter = searchParams.get('type') as 'movie' | 'series' | null;
   const genreFilter = searchParams.get('genre');
+  const queryFilter = searchParams.get('query');
 
   // 2. Side Effect (from page.tsx)
   useEffect(() => {
@@ -99,36 +74,16 @@ export function useWatchlist(): UseWatchlistResult {
 
   // 3. Filtering Logic (from page.tsx)
   const list = useMemo(() => {
-    let filteredList = stored;
-
-    // Apply Status Filter first ('watched', 'watching', 'to-watch')
-    if (statusFilter !== 'all') {
-      filteredList = filteredList.filter((s) => s.status === statusFilter);
-    }
-
-    // 💡 Apply Type Filter (from URL) second
-    if (typeFilter) {
-      filteredList = filteredList.filter((s) => s.type === typeFilter);
-    }
-
-    // 💡 3c. Apply Genre Filter
-    if (genreFilter) {
-      // Convert the selected filter genre to a standardized format (e.g., lowercase and trimmed)
-      const standardizedFilter = genreFilter.toLowerCase().trim();
-
-      filteredList = filteredList.filter((s) =>
-        // We check if ANY genre in the item's genres array matches the standardized filter
-        s.genres?.some(itemGenre =>
-          itemGenre.toLowerCase().trim() === standardizedFilter
-        )
-      );
-    }
-
-    return filteredList;
-  }, [stored, statusFilter, typeFilter, genreFilter]);
+    return filterWatchlist({
+      list: stored,
+      statusFilter,
+      typeFilter,
+      genreFilter,
+      queryFilter
+    });
+  }, [stored, statusFilter, typeFilter, genreFilter, queryFilter]);
 
   // 4. Handlers (from page.tsx)
-
   const setFilter = useCallback((newStatus: 'all' | MediaStatus) => {
     const currentParams = new URLSearchParams(searchParams.toString());
 
@@ -137,7 +92,6 @@ export function useWatchlist(): UseWatchlistResult {
     } else {
       currentParams.set('status', newStatus);
     }
-
     // Push new URL without navigating away from the watchlist page
     router.push(`/watchlist?${currentParams.toString()}`, { scroll: false });
   }, [router, searchParams]);
@@ -155,14 +109,32 @@ export function useWatchlist(): UseWatchlistResult {
     router.push(`/watchlist?${currentParams.toString()}`, { scroll: false });
   }, [router, searchParams]);
 
-  const handleToggleStatus = useCallback((id: string) => {
-    setStored((prev) => prev.map((p) => (p.id === id ? { ...p, status: toggle(p.status) } : p)));
+  const setQueryFilter = useCallback((newQuery: string | null) => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+    if (!newQuery || newQuery.trim() === '') {
+      currentParams.delete('query');
+    } else {
+      currentParams.set('query', newQuery);
+    }
+    router.push(`/watchlist?${currentParams.toString()}`, { scroll: false });
+  }, [router, searchParams]);
+
+
+  const handleUpdateStatus = useCallback((id: string, newStatus: MediaItem['status'] | 'toggle') => {
+    setStored((prev) => prev.map((item) => {
+      if (item.id !== id) {
+        return item;
+      }
+      // Apply toggle logic if requested
+      const finalStatus = newStatus === 'toggle' ? toggle(item.status) : newStatus;
+
+      // This is the clean status update logic
+      return { ...item, status: finalStatus };
+    }));
   }, [setStored]);
 
-  const setStatus = useCallback((id: string, newStatus: MediaStatus) => {
-    setStored((prev) => prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p)));
-  }, [setStored]);
-
+  const handleToggleStatus = useCallback((id: string) => handleUpdateStatus(id, 'toggle'), [handleUpdateStatus]);
+  const setStatus = handleUpdateStatus;
   const handleAddItem = useCallback((itemToAdd: MediaItem) => {
     setStored((prev) => [itemToAdd, ...prev]);
     setShowAddModal(false);
@@ -187,8 +159,6 @@ export function useWatchlist(): UseWatchlistResult {
     }
   }, [stored]);
 
-
-
   return {
     list,
     filter: statusFilter,
@@ -198,8 +168,10 @@ export function useWatchlist(): UseWatchlistResult {
     showAddModal,
     pendingDeletion,
     genreFilter,
+    queryFilter,
     setFilter,
     setGenreFilter,
+    setQueryFilter,
     setSelected,
     handleToggleStatus,
     setStatus,

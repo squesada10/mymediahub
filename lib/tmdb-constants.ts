@@ -28,3 +28,5 @@ export const TMDB_GENRE_MAP: { [id: number]: string } = {
   10767: 'Talk',
   10768: 'War & Politics', // TV specific
 };
+
+export const ALL_AVAILABLE_GENRES = Object.values(TMDB_GENRE_MAP).sort();
