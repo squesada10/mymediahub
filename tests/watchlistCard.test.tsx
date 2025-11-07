@@ -8,6 +8,7 @@ const mockItem: MediaItem = {
   title: 'Test Movie',
   year: 2020,
   type: 'movie',
+  genres: ['genero'],
   poster: '',
   overview: 'Test overview',
   status: 'to-watch',
@@ -16,14 +17,14 @@ const mockItem: MediaItem = {
 
 describe('WatchlistCard', () => {
   test('renders title and year', () => {
-    render(<WatchlistCard item={mockItem} onOpen={() => { }} />);
+    render(<WatchlistCard item={mockItem} onOpen={() => { }} onDeleteItem={() => { }} />);
     expect(screen.getByText(/Test Movie/i)).toBeInTheDocument();
     expect(screen.getByText(/2020/i)).toBeInTheDocument();
   });
 
   test('calls onOpen when clicking card', () => {
     const onOpen = vi.fn();
-    render(<WatchlistCard item={mockItem} onOpen={onOpen} />);
+    render(<WatchlistCard item={mockItem} onOpen={onOpen} onDeleteItem={() => { }} />);
     fireEvent.click(screen.getByText('Test Movie'));
     expect(onOpen).toHaveBeenCalled();
   });

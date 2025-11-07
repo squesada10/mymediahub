@@ -17,6 +17,9 @@ export type UseWatchlistResult = {
   isMounted: boolean;
   showAddModal: boolean;
   pendingDeletion: PendingDeletion;
+  genres: string[]; // All unique genres found
+  genreFilter: string | null; // The currently active genre
+  setGenreFilter: (genre: string | null) => void;
 
   // Actions
   setFilter: (f: 'all' | MediaStatus) => void;
@@ -38,7 +41,35 @@ function toggle(status?: string) {
   if (status === 'watched') return 'to-watch' as MediaStatus;
   return 'to-watch' as MediaStatus;
 }
-
+const ALL_AVAILABLE_GENRES = [
+  'Action',
+  'Adventure',
+  'Action & Adventure',
+  'Animation',
+  'Comedy',
+  'Crime',
+  'Documentary',
+  'Drama',
+  'Family',
+  'Kids',
+  'Fantasy',
+  'History',
+  'Horror',
+  'Music',
+  'Mystery',
+  'News',
+  'Reality',
+  'Romance',
+  'Science-Fiction',
+  'Sci-Fi & Fantasy',
+  'Soap',
+  'Talk',
+  'TV Movie',
+  'Thriller',
+  'War',
+  'War & Politics',
+  'Western'
+].sort();
 
 export function useWatchlist(): UseWatchlistResult {
   const router = useRouter();
@@ -52,10 +83,18 @@ export function useWatchlist(): UseWatchlistResult {
 
   const statusFilter = (searchParams.get('status') as MediaStatus | null) || 'all';
   const typeFilter = searchParams.get('type') as 'movie' | 'series' | null;
+  const genreFilter = searchParams.get('genre');
 
   // 2. Side Effect (from page.tsx)
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  // 2. Data Extraction
+  // Extract and sort all unique genres
+
+  const allGenres = useMemo(() => {
+    return ALL_AVAILABLE_GENRES;
   }, []);
 
   // 3. Filtering Logic (from page.tsx)
@@ -72,8 +111,21 @@ export function useWatchlist(): UseWatchlistResult {
       filteredList = filteredList.filter((s) => s.type === typeFilter);
     }
 
+    // 💡 3c. Apply Genre Filter
+    if (genreFilter) {
+      // Convert the selected filter genre to a standardized format (e.g., lowercase and trimmed)
+      const standardizedFilter = genreFilter.toLowerCase().trim();
+
+      filteredList = filteredList.filter((s) =>
+        // We check if ANY genre in the item's genres array matches the standardized filter
+        s.genres?.some(itemGenre =>
+          itemGenre.toLowerCase().trim() === standardizedFilter
+        )
+      );
+    }
+
     return filteredList;
-  }, [stored, statusFilter, typeFilter]);
+  }, [stored, statusFilter, typeFilter, genreFilter]);
 
   // 4. Handlers (from page.tsx)
 
@@ -90,6 +142,18 @@ export function useWatchlist(): UseWatchlistResult {
     router.push(`/watchlist?${currentParams.toString()}`, { scroll: false });
   }, [router, searchParams]);
 
+  const setGenreFilter = useCallback((newGenre: string | null) => {
+    const currentParams = new URLSearchParams(searchParams.toString());
+
+    const genreValue = newGenre;
+
+    if (!genreValue || genreValue === 'all') {
+      currentParams.delete('genre');
+    } else {
+      currentParams.set('genre', genreValue);
+    }
+    router.push(`/watchlist?${currentParams.toString()}`, { scroll: false });
+  }, [router, searchParams]);
 
   const handleToggleStatus = useCallback((id: string) => {
     setStored((prev) => prev.map((p) => (p.id === id ? { ...p, status: toggle(p.status) } : p)));
@@ -128,11 +192,14 @@ export function useWatchlist(): UseWatchlistResult {
   return {
     list,
     filter: statusFilter,
+    genres: allGenres,
     selected,
     isMounted,
     showAddModal,
     pendingDeletion,
+    genreFilter,
     setFilter,
+    setGenreFilter,
     setSelected,
     handleToggleStatus,
     setStatus,

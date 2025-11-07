@@ -8,6 +8,7 @@ interface BaseMedia {
   year?: number;
   poster?: string;
   overview: string;
+  genres: string[];
   status: MediaStatus;
 }
 

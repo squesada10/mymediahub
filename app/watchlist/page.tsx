@@ -6,6 +6,7 @@ import WatchlistCard from "./components/WatchlistCard";
 import WatchlistFilter from "./components/WatchlistFilter";
 import WatchlistModal from "./components/WatchlistModal";
 import ConfirmDialog from "./components/ConfirmDialog"
+import GenreFilter from "@/app/components/GenreFilter";
 
 export default function WatchlistPage() {
   const {
@@ -15,6 +16,8 @@ export default function WatchlistPage() {
     isMounted,
     showAddModal,
     pendingDeletion,
+    genres,
+    genreFilter,
     setFilter,
     setSelected,
     handleToggleStatus,
@@ -24,6 +27,7 @@ export default function WatchlistPage() {
     requestDeleteItem,
     confirmDeleteItem,
     setPendingDeletion,
+    setGenreFilter,
   } = useWatchlist();
 
   if (!isMounted) {
@@ -44,6 +48,13 @@ export default function WatchlistPage() {
           </div>
           <div className="flex gap-2 items-center">
             <WatchlistFilter filter={filter} setFilter={setFilter} />
+
+            <GenreFilter
+              genres={genres}
+              currentGenre={genreFilter}
+              setGenre={setGenreFilter}
+            />
+
             <button
               onClick={() => setShowAddModal(true)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-all duration-200 dark:bg-blue-500 dark:hover:bg-blue-600">
