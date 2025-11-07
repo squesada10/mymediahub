@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 interface GenreFilterProps {
-  genres: string[]; // All available genres
+  genres: string[];
   currentGenre: string | null; // Currently selected genre from the URL
   setGenre: (genre: string | null) => void; // Function to update the URL
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { TMDB_IMAGE_BASE_URL } from "@/lib/api-constants";
+import { TMDB_GENRE_MAP } from "@/lib/tmdb-constants";
 import type { TmdbSearchResult } from "@/app/api/search/route";
 import type { MediaItem } from "../types";
 import SearchSkeleton from "./SearchSkeleton";
@@ -52,16 +53,45 @@ export default function SearchMediaForm({ onAdd, onClose }: SearchProps) {
 
   // Function to format the TMDB result into my local MediaItem type
   const formatAndAddItem = (result: TmdbSearchResult) => {
-    const item: MediaItem = {
-      // TMDB IDs are numbers, convert to string for consistency with my existing 'id: string' type
+
+    const genreNames: string[] = result.genre_ids
+      ? result.genre_ids
+        .map(id => TMDB_GENRE_MAP[id])
+        .filter(name => name) // Filter out any unknown IDs (undefined names)
+      : [];
+
+    // 1. Define baseItem (the common properties)
+    const baseItem = {
+      // TMDB IDs are numbers, convert to string for consistency
       id: String(result.id),
-      title: result.title,
+      title: result.title ?? result.name ?? 'Unknown Title',
       year: result.release_date ? new Date(result.release_date).getFullYear() : undefined,
-      type: result.media_type === 'movie' ? 'movie' : 'series',
       poster: result.poster_path ? `${TMDB_IMAGE_BASE_URL}${result.poster_path}` : undefined,
       overview: result.overview,
-      status: 'to-watch', // Always defaults to 'to-watch' upon adding
+      status: 'to-watch',
+      genres: genreNames,
     };
+
+    // 2. Declare item using 'let' so we can assign to it inside the if/else block
+    let item: MediaItem;
+
+    if (result.media_type === 'movie') {
+      // Create MovieItem
+      item = {
+        ...baseItem,
+        type: 'movie',
+        runtimeMinutes: 0, // Placeholder for required MovieItem property
+      } as MediaItem;
+
+    } else {
+      // Create SeriesItem (handles 'series' or other non-movie types as series)
+      item = {
+        ...baseItem,
+        type: 'series',
+        episodesWatched: 0, // Placeholder for required SeriesItem property
+      } as MediaItem;
+    }
+
     onAdd(item);
     onClose();
     // Clear search state after successful add
@@ -103,7 +133,7 @@ export default function SearchMediaForm({ onAdd, onClose }: SearchProps) {
                   {item.poster_path ? (
                     <Image
                       src={`${TMDB_IMAGE_BASE_URL}${item.poster_path}`}
-                      alt={item.title}
+                      alt={item.title ?? item.name ?? 'Media Poster'}
                       width={40}
                       height={60}
                       className="rounded object-cover flex-shrink-0 w-10 h-16"

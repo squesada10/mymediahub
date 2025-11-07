@@ -4,11 +4,14 @@ import { TMDB_BASE_URL } from '@/lib/api-constants';
 // Define the structure of the data we want to return from our API route
 export interface TmdbSearchResult {
   id: number;
-  title: string;
+  title?: string;
+  name?: string;
   release_date: string;
-  media_type: 'movie' | 'tv'; // 'tv' is for series
+  first_air_date?: string;
+  media_type: 'movie' | 'tv';
   poster_path: string | null;
   overview: string;
+  genre_ids: number[];
 }
 
 interface TmdbRawItem {
@@ -20,6 +23,7 @@ interface TmdbRawItem {
   poster_path: string | null;
   overview?: string;
   id: number;
+  genre_ids: number[];
 }
 
 // Handler for GET requests (http://localhost:3000/api/search?query=dune)
@@ -70,6 +74,7 @@ export async function GET(request: Request) {
         media_type: item.media_type as 'movie' | 'tv',
         poster_path: item.poster_path,
         overview: item.overview || 'No overview available.',
+        genre_ids: item.genre_ids,
       }));
 
 
