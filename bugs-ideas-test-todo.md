@@ -11,7 +11,7 @@
 
 # Contenido de cada pelicula/serie
 
-[] el/los generos
+[x] el/los generos
 [] la duracion
 [] Valoracion de los usuarios
 [] el director
