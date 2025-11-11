@@ -6,7 +6,7 @@ export const getStatusClasses = (status?: MediaStatus) => {
       return {
         text: 'Watched',
         // Card Badge Style (from original WatchlistCard)
-        badgeClass: 'bg-green-500 text-white',
+        badgeClass: 'bg-green-500 text-white opacity-75',
         // Modal Button Base Color (using the Card's color for consistency)
         colorClass: 'bg-green-500',
         // Card Icon Style
@@ -16,7 +16,7 @@ export const getStatusClasses = (status?: MediaStatus) => {
       return {
         text: 'Watching',
         // Card Badge Style
-        badgeClass: 'bg-yellow-500 text-black',
+        badgeClass: 'bg-yellow-500 text-black opacity-75',
         // Modal Button Base Color
         colorClass: 'bg-yellow-500 dark:bg-yellow-500', // Keep dark mode specific yellow
         // Card Icon Style
@@ -27,7 +27,7 @@ export const getStatusClasses = (status?: MediaStatus) => {
       return {
         text: 'To Watch',
         // Card Badge Style (using the noticeable gray)
-        badgeClass: 'bg-gray-500 text-white',
+        badgeClass: 'bg-gray-500 text-white opacity-75',
         // Modal Button Base Color
         colorClass: 'bg-gray-500',
         // Card Icon Style
