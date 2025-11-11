@@ -26,5 +26,4 @@ describe('WatchlistPage', () => {
   });
 
   // test.todo('should display the correct number of list items');
-  // test.todo('should open the modal when a card is clicked');
 });
