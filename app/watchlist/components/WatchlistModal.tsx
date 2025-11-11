@@ -17,6 +17,10 @@ type Props = {
 export default function WatchlistModal({ item, onClose, onChangeStatus, onDeleteItem, onAddSearchItem }: Props) {
     // Determine the modal mode
     const isAdding = item === null;
+    if (!item && !isAdding) {
+        return null;
+    }
+
     const currentStatus = item?.status ?? 'to-watch';
 
     return (
@@ -58,6 +62,16 @@ export default function WatchlistModal({ item, onClose, onChangeStatus, onDelete
 
                         <div className="flex flex-col">
                             <h2 className="text-xl font-bold">{item!.title} <span className="text-sm text-gray-400">({item!.year})</span></h2>
+                            <div className="flex flex-wrap gap-2 pt-2">
+                                {item.genres.map((genre) => (
+                                    <span
+                                        key={genre}
+                                        className="px-3 py-1 bg-gray-700 text-xs font-medium rounded-full text-gray-300"
+                                    >
+                                        {genre}
+                                    </span>
+                                ))}
+                            </div>
                             <p className="text-sm mt-1 text-gray-500 dark:text-gray-400 capitalize">
                                 {item!.type} | Status: <span className="font-semibold text-black dark:text-white">{item!.status ?? 'to-watch'}</span>
                             </p>
