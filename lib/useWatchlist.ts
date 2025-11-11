@@ -35,6 +35,8 @@ export type UseWatchlistResult = {
   setPendingDeletion: (item: PendingDeletion) => void;
   confirmDeleteItem: () => void;
   requestDeleteItem: (id: string) => void;
+  // Update item partial fields (eg. runtimeMinutes)
+  updateItem: (id: string, updates: Partial<MediaItem>) => void;
 };
 
 // Helper function (moved from page.tsx)
@@ -151,6 +153,12 @@ export function useWatchlist(): UseWatchlistResult {
     setPendingDeletion(null);
   }, [pendingDeletion, setStored]);
 
+  const updateItem = useCallback((id: string, updates: Partial<MediaItem>) => {
+  setStored((prev) => prev.map((item) => item.id === id ? ({ ...(item as unknown as Record<string, unknown>), ...updates } as MediaItem) : item));
+    // Also update selected if it matches
+  setSelected((prev) => prev && prev.id === id ? ({ ...(prev as unknown as Record<string, unknown>), ...updates } as MediaItem) : prev);
+  }, [setStored]);
+
   // Handler to trigger the dialog (called by the cards/modal)
   const requestDeleteItem = useCallback((id: string) => {
     const item = stored.find(i => i.id === id);
@@ -176,6 +184,7 @@ export function useWatchlist(): UseWatchlistResult {
     handleToggleStatus,
     setStatus,
     handleAddItem,
+  updateItem,
     setShowAddModal,
     confirmDeleteItem,
     requestDeleteItem,

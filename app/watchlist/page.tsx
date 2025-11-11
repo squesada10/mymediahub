@@ -28,6 +28,7 @@ export default function WatchlistPage() {
     confirmDeleteItem,
     setPendingDeletion,
     setGenreFilter,
+    updateItem,
   } = useWatchlist();
 
   if (!isMounted) {
@@ -106,6 +107,7 @@ export default function WatchlistPage() {
               });
             }}
             onDeleteItem={requestDeleteItem}
+            onUpdateItem={updateItem}
           />
         )}
         {showAddModal && (
