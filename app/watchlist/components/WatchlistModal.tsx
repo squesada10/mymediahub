@@ -174,7 +174,7 @@ export default function WatchlistModal({ item, onClose, onChangeStatus, onDelete
                                 </button>
                                 <button
                                     onClick={() => onChangeStatus(item!.id, 'watched')}
-                                    disabled={currentStatus === 'to-watch'}
+                                    disabled={currentStatus === 'watched'}
                                     className={getStatusButtonClass('watched', currentStatus)} >
                                     Mark as Watched
                                 </button>
