@@ -1,0 +1,39 @@
+import type { MediaItem } from "./types";
+
+export type NewMediaItemData = Pick<MediaItem, 'title' | 'type' | 'overview'>;
+
+export const MOCK_WATCHLIST: MediaItem[] = [
+  {
+    id: 'm-1',
+    title: 'Alien',
+    year: 2023,
+    type: 'movie',
+    genres: ['Horror', 'Science-Fiction'],
+    poster: '/placeholders/movie-1.jpg',
+    overview: 'An horror journey across unknown galaxy.',
+    status: 'to-watch',
+    runtimeMinutes: 125,
+  },
+  {
+    id: 's-1',
+    title: 'Breaking Bad',
+    year: 2021,
+    type: 'series',
+    genres: ['Drama', 'Action'],
+    poster: '/placeholders/series-1.jpg',
+    overview: 'A drama about a desperate man.',
+    status: 'watching',
+    episodesWatched: 3,
+  },
+  {
+    id: 'm-2',
+    title: 'Whiplash',
+    year: 2019,
+    type: 'movie',
+    genres: ['Drama', 'Horror'],
+    poster: '/placeholders/movie-2.jpg',
+    overview: 'A story of an obsesion',
+    status: 'watched',
+    runtimeMinutes: 97,
+  },
+];

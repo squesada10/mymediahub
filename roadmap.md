@@ -4,19 +4,19 @@
 
 Goal: Make a working, local version of the Watchlist section.
 
-- [] Create basic UI layout inside app/watchlist/page.tsx
-  - [] Add section header (“Watchlist Manager”)
-  - [] Add placeholder search bar and a list/grid of cards
-- [] Create a mock data file (e.g. data/mockWatchlist.ts)
-  - [] Fill it with sample movie/series objects { id, title, year, status, poster }
+- [x] Create basic UI layout inside app/watchlist/page.tsx
+  - [x] Add section header (“Watchlist Manager”)
+  - [x] Add placeholder search bar and a list/grid of cards
+- [x] Create a mock data file (e.g. data/mockWatchlist.ts)
+  - [x] Fill it with sample movie/series objects { id, title, year, status, poster }
 - [] Map over mock data to display the cards
   - [] Use Tailwind for layout and spacing
-  - [] Add placeholder poster image and title
-- [] Add a status filter dropdown (To Watch / Watching / Watched)
-  - [] Use local state to filter the list
-- [] Add interactivity
-  - [] Click on a card → opens a modal (detail view)
-  - [] Modal shows title, poster, description, and “Mark as Watched” button
+  - [x] Add placeholder poster image and title
+- [x] Add a status filter dropdown (To Watch / Watching / Watched)
+  - [x] Use local state to filter the list
+- [x] Add interactivity
+  - [x] Click on a card → opens a modal (detail view)
+  - [x] Modal shows title, poster, description, and “Mark as Watched” button
 - [] Test all interactions locally
 
 ✅ Once this works → you have your UI skeleton + logic
@@ -25,22 +25,22 @@ Goal: Make a working, local version of the Watchlist section.
 
 Goal: Replace your mock list with real movie data.
 
-- [] Create .env.local and add your TMDB API key
-- [] Build a small API route: app/api/search/route.ts
-  - [] Fetch movies/series from TMDB by query
-  - [] Return clean JSON (id, title, poster, overview)
-- [] Connect the frontend search bar to this API route
-- [] Allow adding a searched movie to your local watchlist (in React state)
-- [] Optionally: persist list in localStorage
+- [x] Create .env.local and add your TMDB API key
+- [x] Build a small API route: app/api/search/route.ts
+  - [x] Fetch movies/series from TMDB by query
+  - [x] Return clean JSON (id, title, poster, overview)
+- [x] Connect the frontend search bar to this API route
+- [x] Allow adding a searched movie to your local watchlist (in React state)
+- [x] Optionally: persist list in localStorage
 
 ## Phase 3 — Polish the UI
 
 Goal: Make it feel real and beautiful.
 
-- [] Add hover animations with Tailwind and Framer Motion
-- [] Add empty state (“No items yet”)
-- [] Add loading skeleton for search results
-- [] Create consistent button and card components
+- [x] Add hover animations with Tailwind and Framer Motion
+- [x] Add empty state (“No items yet”)
+- [x] Add loading skeleton for search results
+- [x] Create consistent button and card components
 - [] Write unit tests (Vitest + Testing Library) for core UI
   - [] Render list correctly
   - [] Filter works
