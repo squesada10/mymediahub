@@ -4,12 +4,10 @@ import { useLocalStorage } from "./useLocalStorage";
 import { MOCK_WATCHLIST } from "@/app/watchlist/mockWatchlist";
 import { ALL_AVAILABLE_GENRES } from "@/lib/tmdb-constants";
 import { filterWatchlist } from "@/lib/filter-utils";
+import { getNextStatus, type MediaStatus } from "@/lib/status-constants";
 import type { MediaItem } from "@/app/watchlist/types";
-import type { MediaStatus } from "@/lib/status-utils";
 
-type PendingDeletion = { id: string, title: string } | null;
-
-export type MediaTypeFilter = 'all' | 'movie' | 'series' | MediaStatus;
+type PendingDeletion = { id: string; title: string } | null;
 
 export type UseWatchlistResult = {
   // Data
@@ -19,155 +17,190 @@ export type UseWatchlistResult = {
   isMounted: boolean;
   showAddModal: boolean;
   pendingDeletion: PendingDeletion;
-  genres: string[]; // All unique genres found
-  genreFilter: string | null; // The currently active genre
+  genres: string[];
+  genreFilter: string | null;
   queryFilter: string | null;
-  setGenreFilter: (genre: string | null) => void;
 
-  // Actions
+  // Setters
+  setGenreFilter: (genre: string | null) => void;
   setFilter: (f: 'all' | MediaStatus) => void;
   setSelected: (item: MediaItem | null | SetStateAction<MediaItem | null>) => void;
   setQueryFilter: (newQuery: string | null) => void;
+  setShowAddModal: (show: boolean) => void;
+  setPendingDeletion: (item: PendingDeletion) => void;
+
+  // Mutations
   handleToggleStatus: (id: string) => void;
   setStatus: (id: string, newStatus: MediaStatus) => void;
   handleAddItem: (itemToAdd: MediaItem) => void;
-  setShowAddModal: (show: boolean) => void;
-  setPendingDeletion: (item: PendingDeletion) => void;
   confirmDeleteItem: () => void;
   requestDeleteItem: (id: string) => void;
-  // Update item partial fields (eg. runtimeMinutes)
   updateItem: (id: string, updates: Partial<MediaItem>) => void;
 };
 
-// Helper function (moved from page.tsx)
-function toggle(status?: string) {
-  if (status === 'to-watch') return 'watching' as MediaStatus;
-  if (status === 'watching') return 'watched' as MediaStatus;
-  if (status === 'watched') return 'to-watch' as MediaStatus;
-  return 'to-watch' as MediaStatus;
-}
-
+/**
+ * Central hook for watchlist state management
+ * Handles filtering, local storage persistence, and URL sync
+ */
 export function useWatchlist(): UseWatchlistResult {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // ===== STATE MANAGEMENT =====
   const [stored, setStored] = useLocalStorage<MediaItem[]>('watchlist_v1', MOCK_WATCHLIST);
   const [selected, setSelected] = useState<MediaItem | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [pendingDeletion, setPendingDeletion] = useState<PendingDeletion>(null);
 
+  // ===== URL PARAMETERS =====
   const statusFilter = (searchParams.get('status') as MediaStatus | null) || 'all';
   const typeFilter = searchParams.get('type') as 'movie' | 'series' | null;
   const genreFilter = searchParams.get('genre');
   const queryFilter = searchParams.get('query');
 
-  // 2. Side Effect (from page.tsx)
+  // ===== INITIALIZATION =====
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // 2. Data Extraction
-  // Extract and sort all unique genres
+  // ===== COMPUTED DATA =====
+  const allGenres = useMemo(() => ALL_AVAILABLE_GENRES, []);
 
-  const allGenres = useMemo(() => {
-    return ALL_AVAILABLE_GENRES;
-  }, []);
-
-  // 3. Filtering Logic (from page.tsx)
   const list = useMemo(() => {
     return filterWatchlist({
       list: stored,
       statusFilter,
       typeFilter,
       genreFilter,
-      queryFilter
+      queryFilter,
     });
   }, [stored, statusFilter, typeFilter, genreFilter, queryFilter]);
 
-  // 4. Handlers (from page.tsx)
-  const setFilter = useCallback((newStatus: 'all' | MediaStatus) => {
-    const currentParams = new URLSearchParams(searchParams.toString());
+  // ===== URL SYNCING HELPERS =====
+  /**
+   * Update URL parameters without page navigation
+   */
+  const updateUrlParam = useCallback(
+    (param: string, value: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
 
-    if (newStatus === 'all') {
-      currentParams.delete('status');
-    } else {
-      currentParams.set('status', newStatus);
-    }
-    // Push new URL without navigating away from the watchlist page
-    router.push(`/watchlist?${currentParams.toString()}`, { scroll: false });
-  }, [router, searchParams]);
-
-  const setGenreFilter = useCallback((newGenre: string | null) => {
-    const currentParams = new URLSearchParams(searchParams.toString());
-
-    const genreValue = newGenre;
-
-    if (!genreValue || genreValue === 'all') {
-      currentParams.delete('genre');
-    } else {
-      currentParams.set('genre', genreValue);
-    }
-    router.push(`/watchlist?${currentParams.toString()}`, { scroll: false });
-  }, [router, searchParams]);
-
-  const setQueryFilter = useCallback((newQuery: string | null) => {
-    const currentParams = new URLSearchParams(searchParams.toString());
-    if (!newQuery || newQuery.trim() === '') {
-      currentParams.delete('query');
-    } else {
-      currentParams.set('query', newQuery);
-    }
-    router.push(`/watchlist?${currentParams.toString()}`, { scroll: false });
-  }, [router, searchParams]);
-
-
-  const handleUpdateStatus = useCallback((id: string, newStatus: MediaItem['status'] | 'toggle') => {
-    setStored((prev) => prev.map((item) => {
-      if (item.id !== id) {
-        return item;
+      if (value === null || value === 'all') {
+        params.delete(param);
+      } else {
+        params.set(param, value);
       }
-      // Apply toggle logic if requested
-      const finalStatus = newStatus === 'toggle' ? toggle(item.status) : newStatus;
 
-      // This is the clean status update logic
-      return { ...item, status: finalStatus };
-    }));
-  }, [setStored]);
+      router.push(`/watchlist?${params.toString()}`, { scroll: false });
+    },
+    [router, searchParams]
+  );
 
-  const handleToggleStatus = useCallback((id: string) => handleUpdateStatus(id, 'toggle'), [handleUpdateStatus]);
-  const setStatus = handleUpdateStatus;
-  const handleAddItem = useCallback((itemToAdd: MediaItem) => {
-    setStored((prev) => [itemToAdd, ...prev]);
-    setShowAddModal(false);
-  }, [setStored]);
+  // ===== FILTER HANDLERS =====
+  const setFilter = useCallback(
+    (newStatus: 'all' | MediaStatus) => {
+      updateUrlParam('status', newStatus === 'all' ? null : newStatus);
+    },
+    [updateUrlParam]
+  );
+
+  const setGenreFilter = useCallback(
+    (newGenre: string | null) => {
+      updateUrlParam('genre', newGenre);
+    },
+    [updateUrlParam]
+  );
+
+  const setQueryFilter = useCallback(
+    (newQuery: string | null) => {
+      updateUrlParam('query', newQuery && newQuery.trim() ? newQuery : null);
+    },
+    [updateUrlParam]
+  );
+
+  // ===== STATUS MUTATIONS =====
+  /**
+   * Update an item's status by ID
+   * Supports both setting to a specific status or toggling to next
+   */
+  const updateStatus = useCallback(
+    (id: string, newStatus: MediaStatus | 'toggle') => {
+      setStored((prev) =>
+        prev.map((item) => {
+          if (item.id !== id) return item;
+
+          const finalStatus = newStatus === 'toggle' ? getNextStatus(item.status) : newStatus;
+          return { ...item, status: finalStatus };
+        })
+      );
+    },
+    [setStored]
+  );
+
+  const handleToggleStatus = useCallback(
+    (id: string) => {
+      updateStatus(id, 'toggle');
+    },
+    [updateStatus]
+  );
+
+  const setStatus = useCallback(
+    (id: string, newStatus: MediaStatus) => {
+      updateStatus(id, newStatus);
+    },
+    [updateStatus]
+  );
+
+  // ===== CRUD OPERATIONS =====
+  const handleAddItem = useCallback(
+    (itemToAdd: MediaItem) => {
+      setStored((prev) => [itemToAdd, ...prev]);
+      setShowAddModal(false);
+    },
+    [setStored]
+  );
 
   const confirmDeleteItem = useCallback(() => {
     if (!pendingDeletion) return;
 
-    const idToDelete = pendingDeletion.id;
-
-    setStored((prev) => prev.filter((p) => p.id !== idToDelete));
+    setStored((prev) => prev.filter((item) => item.id !== pendingDeletion.id));
     setSelected(null);
-    // Clear the pending state
     setPendingDeletion(null);
   }, [pendingDeletion, setStored]);
 
-  const updateItem = useCallback((id: string, updates: Partial<MediaItem>) => {
-  setStored((prev) => prev.map((item) => item.id === id ? ({ ...(item as unknown as Record<string, unknown>), ...updates } as MediaItem) : item));
-    // Also update selected if it matches
-  setSelected((prev) => prev && prev.id === id ? ({ ...(prev as unknown as Record<string, unknown>), ...updates } as MediaItem) : prev);
-  }, [setStored]);
+  const requestDeleteItem = useCallback(
+    (id: string) => {
+      const item = stored.find((i) => i.id === id);
+      if (item) {
+        setPendingDeletion({ id: item.id, title: item.title });
+      }
+    },
+    [stored]
+  );
 
-  // Handler to trigger the dialog (called by the cards/modal)
-  const requestDeleteItem = useCallback((id: string) => {
-    const item = stored.find(i => i.id === id);
-    if (item) {
-      setPendingDeletion({ id: item.id, title: item.title });
-    }
-  }, [stored]);
+  // ===== ITEM UPDATES =====
+  /**
+   * Update partial fields of an item (e.g., runtime, rating)
+   * Also updates selected item if it matches
+   */
+  const updateItem = useCallback(
+    (id: string, updates: Partial<MediaItem>) => {
+      setStored((prev) =>
+        prev.map((item) =>
+          item.id === id ? ({ ...item, ...updates } as MediaItem) : item
+        )
+      );
 
+      setSelected((prev) =>
+        prev && prev.id === id ? ({ ...prev, ...updates } as MediaItem) : prev
+      );
+    },
+    [setStored]
+  );
+
+  // ===== RETURN =====
   return {
+    // Data
     list,
     filter: statusFilter,
     genres: allGenres,
@@ -177,17 +210,21 @@ export function useWatchlist(): UseWatchlistResult {
     pendingDeletion,
     genreFilter,
     queryFilter,
+
+    // Setters
     setFilter,
     setGenreFilter,
     setQueryFilter,
     setSelected,
+    setShowAddModal,
+    setPendingDeletion,
+
+    // Mutations
     handleToggleStatus,
     setStatus,
     handleAddItem,
-  updateItem,
-    setShowAddModal,
+    updateItem,
     confirmDeleteItem,
     requestDeleteItem,
-    setPendingDeletion
   };
 }

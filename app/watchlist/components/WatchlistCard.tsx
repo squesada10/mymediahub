@@ -1,6 +1,6 @@
 'use client';
 import Image from "next/image";
-import { getStatusClasses } from "@/lib/status-utils";
+import { getStatusClasses } from "@/lib/status-constants";
 import type { MediaItem } from "../types";
 
 type Props = {

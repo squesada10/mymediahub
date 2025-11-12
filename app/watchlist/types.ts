@@ -1,4 +1,4 @@
-import type { MediaStatus } from "@/lib/status-utils"
+import type { MediaStatus } from "@/lib/status-constants"
 
 export type MediaItem = MovieItem | SeriesItem;
 export type StatusFilter = 'all' | MediaItem['status'];

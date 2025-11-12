@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { filterWatchlist } from '@/lib/filter-utils'; // Adjust the path if necessary
 import type { MediaItem, StatusFilter, TypeFilter } from '@/app/watchlist/types'; // Adjust the path if necessary
-import type { MediaStatus } from "@/lib/status-utils";
+import type { MediaStatus } from "@/lib/status-constants";
 
 // --- Mock Data ---
 const mockList: MediaItem[] = [

@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
-import { getStatusClasses, getStatusButtonClass } from '@/lib/status-utils';
-import type { MediaStatus } from '@/lib/status-utils';
+import { getStatusClasses, getStatusButtonClass } from '@/lib/status-constants';
+import type { MediaStatus } from '@/lib/status-constants';
 
 describe('status-utils', () => {
   describe('getStatusClasses', () => {
