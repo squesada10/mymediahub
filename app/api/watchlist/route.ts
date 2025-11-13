@@ -6,7 +6,12 @@ export async function GET() {
     const items = await prisma.mediaItem.findMany({
       orderBy: { createdAt: 'desc' },
     })
-    return NextResponse.json(items)
+    const normalized = items.map((item) => ({
+      ...item,
+      genres: JSON.parse(item.genresJson || '[]'),
+    }))
+
+    return NextResponse.json(normalized)
   } catch (error) {
     console.error('GET /api/watchlist error:', error)
     return NextResponse.json({ error: 'Failed to fetch watchlist' }, { status: 500 })
