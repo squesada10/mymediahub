@@ -5,7 +5,7 @@ console.log('✅ [id]/route.ts loaded')
 
 export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
   console.log('🧨 DELETE handler invoked with:', context)
-  const { id } = context.params
+  const { id } = await context.params
   try {
     await prisma.mediaItem.delete({ where: { id } })
     return NextResponse.json({ success: true })
@@ -17,7 +17,7 @@ export async function DELETE(req: NextRequest, context: { params: { id: string }
 
 export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
   console.log('🧩 PATCH handler invoked with:', context)
-  const { id } = context.params
+  const { id } = await context.params
   const { status } = await req.json()
   try {
     const item = await prisma.mediaItem.update({
