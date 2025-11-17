@@ -7,12 +7,23 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum MediaType {
+  movie
+  show
+}
+
+enum MediaStatus {
+  to_watch
+  watching
+  watched
+}
+
 model MediaItem {
   id         String   @id @default(cuid())
-  tmdbId     Int
+  tmdbId     Int?
   title      String
-  type       String   // "movie" | "tv"
-  status     String   // "to-watch" | "watching" | "watched"
+  type       MediaType   // "movie" | "tv"
+  status     MediaStatus   // "to-watch" | "watching" | "watched"
   overview   String?
   posterUrl  String?
   genresJson String  @map("genres")

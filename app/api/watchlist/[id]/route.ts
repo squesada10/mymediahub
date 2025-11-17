@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { mediaItemUpdateSchema } from '@/lib/validation/mediaItem'
 
 console.log('✅ [id]/route.ts loaded')
 
@@ -15,19 +16,44 @@ export async function DELETE(req: NextRequest, context: { params: { id: string }
   }
 }
 
-export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
-  console.log('🧩 PATCH handler invoked with:', context)
-  const { id } = await context.params
-  const { status } = await req.json()
+export async function PATCH(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await context.params
+    const raw = await req.json()
+    const data = mediaItemUpdateSchema.parse(raw)
+
     const item = await prisma.mediaItem.update({
       where: { id },
-      data: { status },
+      data: { status: data.status },
     })
-    return NextResponse.json(item)
+
+    return NextResponse.json({
+      ...item,
+      genres: JSON.parse(item.genresJson || "[]"),
+    })
   } catch (error) {
-    console.error('PATCH error:', error)
-    return NextResponse.json({ error: 'Failed to update item' }, { status: 500 })
+    console.error("PATCH validation or update error:", error)
+    return NextResponse.json({ error: "failed to update item" }, { status: 400 })
   }
 }
+
+
+// export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
+//   console.log('🧩 PATCH handler invoked with:', context)
+//   const { id } = await context.params
+//   const { status } = await req.json()
+//   try {
+//     const item = await prisma.mediaItem.update({
+//       where: { id },
+//       data: { status },
+//     })
+//     return NextResponse.json(item)
+//   } catch (error) {
+//     console.error('PATCH error:', error)
+//     return NextResponse.json({ error: 'Failed to update item' }, { status: 500 })
+//   }
+// }
 
