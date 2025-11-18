@@ -2,7 +2,7 @@ import { z } from "zod";
 import { MediaType, MediaStatus } from "@prisma/client";
 
 export const mediaItemCreateSchema = z.object({
-  title: z.string().min(1),
+  title: z.string(),
   type: z.nativeEnum(MediaType),
   status: z.nativeEnum(MediaStatus),
   overview: z.string().optional(),
@@ -11,6 +11,6 @@ export const mediaItemCreateSchema = z.object({
 });
 
 export const mediaItemUpdateSchema = z.object({
-  status: z.enum(["pending", "watching", "watched"]),
+  status: z.enum(["to-watch", "watching", "watched"]),
 });
 

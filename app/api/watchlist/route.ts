@@ -19,12 +19,10 @@ export async function GET() {
   }
 }
 
-const data = mediaItemCreateSchema.parse(body)
-
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
-    const data = mediaItemCreateSchema.parse(body)
+    const json = await req.json()
+    const data = mediaItemCreateSchema.parse(json)
 
     const item = await prisma.mediaItem.create({
       data: {
@@ -37,13 +35,10 @@ export async function POST(req: Request) {
       },
     })
 
-    return NextResponse.json({
-      ...item,
-      genres: data.genres,
-    })
+    return new Response(JSON.stringify(item), { status: 201 })
   } catch (error) {
     console.error("POST validation error:", error)
-    return NextResponse.json({ error: "Invalid body" }, { status: 400 })
+    return new Response("Invalid input", { status: 400 })
   }
 }
 

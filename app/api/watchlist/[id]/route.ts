@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { mediaItemUpdateSchema } from '@/lib/validation/mediaItem'
+import { MediaStatus } from "@prisma/client"
+import { z } from "zod"
 
 console.log('✅ [id]/route.ts loaded')
+
+const patchSchema = z.object({
+  status: z.nativeEnum(MediaStatus)
+});
 
 export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
   console.log('🧨 DELETE handler invoked with:', context)
@@ -16,27 +21,21 @@ export async function DELETE(req: NextRequest, context: { params: { id: string }
   }
 }
 
-export async function PATCH(
-  req: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: Request, context: { params: { id: string } }) {
   try {
     const { id } = await context.params
-    const raw = await req.json()
-    const data = mediaItemUpdateSchema.parse(raw)
+    const json = await req.json()
+    const data = patchSchema.parse(json)
 
     const item = await prisma.mediaItem.update({
       where: { id },
-      data: { status: data.status },
+      data: { status: data.status }
     })
 
-    return NextResponse.json({
-      ...item,
-      genres: JSON.parse(item.genresJson || "[]"),
-    })
-  } catch (error) {
-    console.error("PATCH validation or update error:", error)
-    return NextResponse.json({ error: "failed to update item" }, { status: 400 })
+    return NextResponse.json(item)
+  } catch (err) {
+    console.error("PATCH error:", err)
+    return NextResponse.json({ error: "Failed to update item" }, { status: 500 })
   }
 }
 
