@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { Prisma } from "@prisma/client";
-import type { z } from "zod";
-import { mediaItemCreateSchema, mediaItemOutputSchema } from '@/lib/validation/mediaItem'
+import { mediaItemCreateSchema, mediaItemOutputSchema, MediaItemOutput } from '@/lib/schemas/mediaItem'
+import { mediaItemRepo } from "@/lib/repositories/mediaItemRepo";
 
 
-export type MediaItemOutput = z.infer<typeof mediaItemOutputSchema>;
 type PrismaMediaItem = Prisma.MediaItemGetPayload<true>;
 
 export function transformMediaItem(item: PrismaMediaItem): MediaItemOutput {
@@ -20,19 +18,11 @@ export function transformMediaItem(item: PrismaMediaItem): MediaItemOutput {
 
 export async function GET() {
   try {
-    const items = await prisma.mediaItem.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-
-    const output = items.map(transformMediaItem);
-
-    return NextResponse.json(output);
-  } catch (error) {
-    console.error("GET /api/watchlist error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch watchlist" },
-      { status: 500 }
-    );
+    const items = await mediaItemRepo.getAll();
+    return NextResponse.json(items);
+  } catch (err) {
+    console.error("GET error:", err);
+    return NextResponse.json({ error: "Failed to fetch items" }, { status: 500 });
   }
 }
 
@@ -41,47 +31,11 @@ export async function POST(req: Request) {
     const json = await req.json();
     const data = mediaItemCreateSchema.parse(json);
 
-    const created = await prisma.mediaItem.create({
-      data: {
-        title: data.title,
-        type: data.type,
-        status: data.status,
-        overview: data.overview ?? null,
-        posterUrl: data.posterUrl ?? null,
-        genresJson: JSON.stringify(data.genres ?? []),
-      },
-    });
+    const item = await mediaItemRepo.create(data);
 
-    const output = transformMediaItem(created);
-
-    return NextResponse.json(output, { status: 201 });
-  } catch (error) {
-    console.error("POST validation error:", error);
+    return NextResponse.json(item, { status: 201 });
+  } catch (err) {
+    console.error("POST error:", err);
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
 }
-
-
-// export async function POST(req: Request) {
-//   try {
-//     const { title, overview, posterUrl, genres, status, tmdbId, type } = await req.json()
-//
-//     const item = await prisma.mediaItem.create({
-//       data: {
-//         tmdbId: Number(tmdbId),
-//         type: String(type),
-//         title: String(title),
-//         overview: String(overview ?? ''),
-//         posterUrl: posterUrl ?? null,
-//         genresJson: JSON.stringify(genres ?? []),
-//         status: String(status),
-//       },
-//     })
-//
-//     return NextResponse.json(item)
-//   } catch (error) {
-//     console.error('POST /api/watchlist error:', error)
-//     return NextResponse.json({ error: 'Failed to create item' }, { status: 500 })
-//   }
-// }
-
