@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { MediaStatus } from "@prisma/client"
+import { transformMediaItem } from '../route'
 import { z } from "zod"
 
 console.log('✅ [id]/route.ts loaded')
@@ -27,15 +28,22 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
     const json = await req.json()
     const data = patchSchema.parse(json)
 
-    const item = await prisma.mediaItem.update({
+    const updated = await prisma.mediaItem.update({
       where: { id },
-      data: { status: data.status }
-    })
+      data: {
+        status: data.status,
+      },
+    });
 
-    return NextResponse.json(item)
+    const output = transformMediaItem(updated);
+
+    return NextResponse.json(output);
   } catch (err) {
-    console.error("PATCH error:", err)
-    return NextResponse.json({ error: "Failed to update item" }, { status: 500 })
+    console.error("PATCH error:", err);
+    return NextResponse.json(
+      { error: "Failed to update item" },
+      { status: 500 }
+    );
   }
 }
 

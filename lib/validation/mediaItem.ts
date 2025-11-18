@@ -14,3 +14,13 @@ export const mediaItemUpdateSchema = z.object({
   status: z.enum(["to-watch", "watching", "watched"]),
 });
 
+
+export const mediaItemOutputSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  type: z.nativeEnum(MediaType),
+  status: z.nativeEnum(MediaStatus),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
